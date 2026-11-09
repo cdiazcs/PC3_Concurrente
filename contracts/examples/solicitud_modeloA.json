@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "tipo": "CLASIFICAR_IMAGEN",
+  "idSolicitud": "demo-0001",
+  "idCliente": "cliente-demo-01",
+  "modeloDestino": "A",
+  "timestamp": "2026-11-09T08:00:00Z",
+  "intento": 1,
+  "payload": {
+    "mimeType": "image/png",
+    "imagenBase64": "<BASE64_DE_UNA_IMAGEN_PNG_REAL>"
+  }
+}

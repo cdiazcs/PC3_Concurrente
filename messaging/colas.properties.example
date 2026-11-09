@@ -1,0 +1,12 @@
+rabbitmq.host=127.0.0.1
+rabbitmq.port=5672
+rabbitmq.vhost=/
+# Nunca guardar credenciales en este archivo.
+queue.modelA=cola_modeloA
+queue.modelB=cola_modeloB
+queue.resultA=cola_resultadosA
+queue.resultB=cola_resultadosB
+queue.validation=cola_validacion
+queue.persistence=cola_persistencia
+queue.heartbeat=cola_control_heartbeat
+queue.logs=cola_logs

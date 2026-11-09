@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "tipo": "RESULTADO_CLASIFICACION",
+  "idSolicitud": "demo-0001",
+  "idCliente": "cliente-demo-01",
+  "modeloDestino": "A",
+  "timestamp": "2026-11-09T08:00:01Z",
+  "payload": {
+    "etiqueta": "circulo",
+    "probabilidades": {"circulo": 0.98, "cruz": 0.01, "triangulo": 0.01},
+    "duracionMs": 123.0
+  }
+}
