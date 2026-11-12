@@ -10,7 +10,8 @@ import random
 import time
 
 from .dataset import DEFAULT_DATASET, ROOT, load_split, read_manifest
-from .model import CNN, SHAPES, finite, loss_and_gradients, save_weights
+from .model import CNN, SHAPES, cross_entropy, finite, loss_and_gradients, save_weights
+from .training_math import Adam, compute_gradients
 
 
 def initial_weights(seed):
@@ -26,12 +27,13 @@ def initial_weights(seed):
 
 
 def metrics(model, examples):
+    if not examples:
+        raise ValueError('empty_evaluation')
     correct, total_loss = 0, 0.0
     for image, label in examples:
         state = model.trace(image)
         logits = state['logits']
-        maximum = max(logits)
-        total_loss += maximum + math.log(sum(math.exp(x-maximum) for x in logits)) - logits[label]
+        total_loss += cross_entropy(logits, label)
         correct += max(range(3), key=state['probabilities'].__getitem__) == label
     return {'accuracy': correct/len(examples), 'cross_entropy': total_loss/len(examples)}
 
@@ -43,8 +45,7 @@ def train(training, validation, epochs=60, batch_size=24, learning_rate=.003,
         raise ValueError('training_parameters')
     weights = initial_weights(seed)
     starting = {key: values[:] for key, values in weights.items()}
-    moment1 = {key: [0.0]*count for key, count in SHAPES.items()}
-    moment2 = {key: [0.0]*count for key, count in SHAPES.items()}
+    optimizer = Adam(learning_rate)
     rng = random.Random(seed+1)
     history, best_loss, best_epoch, step = [], math.inf, 0, 0
     best = None
@@ -55,27 +56,10 @@ def train(training, validation, epochs=60, batch_size=24, learning_rate=.003,
         loss_total = 0.0
         for offset in range(0, len(order), batch_size):
             batch = order[offset:offset+batch_size]
-            accumulated = {key: [0.0]*count for key, count in SHAPES.items()}
-            for index in batch:
-                image, label = training[index]
-                loss, gradients = loss_and_gradients(weights, image, label)
-                loss_total += loss
-                for key in SHAPES:
-                    source, target = gradients[key], accumulated[key]
-                    for i in range(len(source)):
-                        target[i] += source[i]/len(batch)
-            norm = math.sqrt(sum(value*value for values in accumulated.values() for value in values))
-            scale = min(1.0, 5.0/max(norm, 1e-30))
-            step += 1
-            for key in SHAPES:
-                values, first, second = weights[key], moment1[key], moment2[key]
-                for i, value in enumerate(accumulated[key]):
-                    gradient = finite(value*scale)
-                    first[i] = .9*first[i] + .1*gradient
-                    second[i] = .999*second[i] + .001*gradient*gradient
-                    estimate = first[i]/(1-.9**step)
-                    variance = second[i]/(1-.999**step)
-                    values[i] = finite(values[i] - learning_rate*estimate/(math.sqrt(variance)+1e-8))
+            loss, gradients = compute_gradients(weights, [training[index] for index in batch],
+                                                gradient_fn=loss_and_gradients)
+            loss_total += loss*len(batch)
+            weights = optimizer.apply(weights, gradients)
         validation_metrics = metrics(CNN(weights), validation)
         row = {'epoch': epoch, 'train_cross_entropy': loss_total/len(training),
                'validation_cross_entropy': validation_metrics['cross_entropy'],

@@ -149,76 +149,87 @@ class BenchmarkTests(protocol.ProtocolTests):
         self.assertEqual(summary['errors.connection_not_sent'], '4')
 
     def test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines(self):
-        for scenario, cores in [('DISTRIBUTED', 1), ('PARALLEL_DISTRIBUTED', 2)]:
-            nodes, servers = [], []
-            worker_ports = [self.free_port() for _ in range(3)]
-            if cores == 2:
-                while worker_ports[2]+1 in self.ports:
-                    worker_ports[2] = self.free_port()
-                with __import__('socket').socket() as probe:
-                    probe.bind(('127.0.0.1', worker_ports[2]+1))
-                self.ports.add(worker_ports[2]+1)
-            coordinator = self.free_port()
-            workers = ['127.0.0.1:'+str(port) for port in worker_ports]
-            if cores == 2:
-                workers.append('127.0.0.1:'+str(worker_ports[2]+1))
-            agent_ports = [self.free_port() for _ in range(3)]
-            try:
-                for at, language in enumerate(('Java', 'CSharp', 'Python')):
-                    args = argparse.Namespace(scenario=scenario, cores=cores, core_start=at*cores, language=language,
-                                              worker_port=worker_ports[at], advertise='127.0.0.1', classes=str(self.artifacts),
-                                              csharp=str(self.artifacts/'csharp/Worker.dll'), logs=str(self.artifacts/(scenario+'-nodes')),
-                                              coordinator_port=coordinator, coordinator_workers=None)
-                    node = node_agent.Node(args); nodes.append(node); node.launch()
-                nodes[0].args.coordinator_workers = workers
-                nodes[0].start(['java', '-Dopenaicubes.remotePostprocess=true', '-Dopenaicubes.denseChunkSize=1',
-                                '-Dopenaicubes.benchmarkProfile='+scenario, '-cp', str(self.artifacts), 'CentralServer',
-                                str(coordinator), *workers], coordinator, 'Coordinator', 0, nodes[0].mask)
-                for node, port in zip(nodes, agent_ports):
-                    def handler_factory(current):
-                        class Handler(socketserver.BaseRequestHandler):
-                            def handle(self):
-                                fields = node_agent.receive(self.request).split('|')
-                                node_agent.send(self.request, 'NODEINFO|'+fields[1]+'|'+current.snapshot())
-                        return Handler
-                    server = socketserver.ThreadingTCPServer(('127.0.0.1', port), handler_factory(node))
-                    servers.append(server); threading.Thread(target=server.serve_forever, daemon=True).start()
-                output, summary = self.benchmark('profile-'+scenario.lower(), scenario=scenario, requests=30, warmup=3,
-                                                 clients=3, host='127.0.0.1', port=coordinator,
-                                                 agents=','.join('127.0.0.1:'+str(port) for port in agent_ports),
-                                                 **{'allow.localhost': 'true'})
-                self.assertEqual(summary['success'], '30')
-                self.assertEqual(summary['errors'], '0')
-                self.assertEqual(summary['compute_slots'], str(3*cores))
-                self.assertEqual(summary['compute_processes'], '3' if cores == 1 else '4')
-                self.assertEqual(summary['observed_machines'], '1')
-                self.assertEqual(summary['verification'], 'localhost_emulation')
-                self.assertEqual(summary['physical_cluster_verified'], 'false')
-                self.assertEqual(summary['client.affinity'], summary['before.node.0.affinity.mask'])
-                self.assertEqual(summary['speedup.total'], '')
-                self.assertIsNone(graphs.measured(output))
-                self.assertIsNotNone(graphs.measured(output, allow_localhost=True))
-                print('ETAPA6:', scenario, 'localhost only;', summary['compute_processes'], 'workers;', summary['compute_slots'], 'slots; 30/30', flush=True)
-                original = graphs.properties(output.with_name(output.name+'.summary.properties'))
-                config = self.artifacts/('profile-'+scenario.lower()+'.properties')
-                rejected = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark', '--config', str(config),
-                                           'allow.localhost=false', 'requests=1'], cwd=ROOT, capture_output=True, text=True, timeout=30)
-                self.assertNotEqual(rejected.returncode, 0)
-                self.assertIn('three_distinct_machines_required', rejected.stderr)
-                self.assertEqual(original['configuration_valid'], 'true')
-                trace = (self.artifacts/(scenario+'-nodes')/('Coordinator-'+str(coordinator)+'.log')).read_text(encoding='utf-8')
-                self.assertIn('|POST|', trace)
-                for language in ('Java', 'Python', 'CSharp'):
-                    self.assertIn('|'+language+'|', trace)
-                if scenario == 'DISTRIBUTED':
-                    process = nodes[2].processes[0][0]
-                    resource_probe.set_affinity(process.pid, nodes[0].mask)
-                    self.assertIn('valid=false', nodes[2].snapshot())
-            finally:
-                for server in servers:
-                    server.shutdown(); server.server_close()
-                for node in reversed(nodes):
-                    node.close()
+        self.local_cluster_profile('DISTRIBUTED', 1)
+
+    def test_parallel_distributed_profile_with_six_physical_cores(self):
+        self.local_cluster_profile('PARALLEL_DISTRIBUTED', 2)
+
+    def local_cluster_profile(self, scenario, cores):
+        info = resource_probe.topology()
+        allowed = resource_probe.affinity(__import__('os').getpid())
+        available = sum(bool(core['mask'] & allowed) for core in info['cores'])
+        if available < 3*cores:
+            self.skipTest(f'{scenario}: emulacion requiere {3*cores} nucleos fisicos '
+                          f'disjuntos; disponibles {available}. No acredita maquinas distintas.')
+        nodes, servers = [], []
+        worker_ports = [self.free_port() for _ in range(3)]
+        if cores == 2:
+            while worker_ports[2]+1 in self.ports:
+                worker_ports[2] = self.free_port()
+            with __import__('socket').socket() as probe:
+                probe.bind(('127.0.0.1', worker_ports[2]+1))
+            self.ports.add(worker_ports[2]+1)
+        coordinator = self.free_port()
+        workers = ['127.0.0.1:'+str(port) for port in worker_ports]
+        if cores == 2:
+            workers.append('127.0.0.1:'+str(worker_ports[2]+1))
+        agent_ports = [self.free_port() for _ in range(3)]
+        try:
+            for at, language in enumerate(('Java', 'CSharp', 'Python')):
+                args = argparse.Namespace(scenario=scenario, cores=cores, core_start=at*cores, language=language,
+                                          worker_port=worker_ports[at], advertise='127.0.0.1', classes=str(self.artifacts),
+                                          csharp=str(self.artifacts/'csharp/Worker.dll'), logs=str(self.artifacts/(scenario+'-nodes')),
+                                          coordinator_port=coordinator, coordinator_workers=None)
+                node = node_agent.Node(args); nodes.append(node); node.launch()
+            nodes[0].args.coordinator_workers = workers
+            nodes[0].start(['java', '-Dopenaicubes.remotePostprocess=true', '-Dopenaicubes.denseChunkSize=1',
+                            '-Dopenaicubes.benchmarkProfile='+scenario, '-cp', str(self.artifacts), 'CentralServer',
+                            str(coordinator), *workers], coordinator, 'Coordinator', 0, nodes[0].mask)
+            for node, port in zip(nodes, agent_ports):
+                def handler_factory(current):
+                    class Handler(socketserver.BaseRequestHandler):
+                        def handle(self):
+                            fields = node_agent.receive(self.request).split('|')
+                            node_agent.send(self.request, 'NODEINFO|'+fields[1]+'|'+current.snapshot())
+                    return Handler
+                server = socketserver.ThreadingTCPServer(('127.0.0.1', port), handler_factory(node))
+                servers.append(server); threading.Thread(target=server.serve_forever, daemon=True).start()
+            output, summary = self.benchmark('profile-'+scenario.lower(), scenario=scenario, requests=30, warmup=3,
+                                             clients=3, host='127.0.0.1', port=coordinator,
+                                             agents=','.join('127.0.0.1:'+str(port) for port in agent_ports),
+                                             **{'allow.localhost': 'true'})
+            self.assertEqual(summary['success'], '30')
+            self.assertEqual(summary['errors'], '0')
+            self.assertEqual(summary['compute_slots'], str(3*cores))
+            self.assertEqual(summary['compute_processes'], '3' if cores == 1 else '4')
+            self.assertEqual(summary['observed_machines'], '1')
+            self.assertEqual(summary['verification'], 'localhost_emulation')
+            self.assertEqual(summary['physical_cluster_verified'], 'false')
+            self.assertEqual(summary['client.affinity'], summary['before.node.0.affinity.mask'])
+            self.assertEqual(summary['speedup.total'], '')
+            self.assertIsNone(graphs.measured(output))
+            self.assertIsNotNone(graphs.measured(output, allow_localhost=True))
+            print('ETAPA6:', scenario, 'localhost only;', summary['compute_processes'], 'workers;', summary['compute_slots'], 'slots; 30/30', flush=True)
+            original = graphs.properties(output.with_name(output.name+'.summary.properties'))
+            config = self.artifacts/('profile-'+scenario.lower()+'.properties')
+            rejected = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark', '--config', str(config),
+                                       'allow.localhost=false', 'requests=1'], cwd=ROOT, capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertIn('three_distinct_machines_required', rejected.stderr)
+            self.assertEqual(original['configuration_valid'], 'true')
+            trace = (self.artifacts/(scenario+'-nodes')/('Coordinator-'+str(coordinator)+'.log')).read_text(encoding='utf-8')
+            self.assertIn('|POST|', trace)
+            for language in ('Java', 'Python', 'CSharp'):
+                self.assertIn('|'+language+'|', trace)
+            if scenario == 'DISTRIBUTED':
+                process = nodes[2].processes[0][0]
+                resource_probe.set_affinity(process.pid, nodes[0].mask)
+                self.assertIn('valid=false', nodes[2].snapshot())
+        finally:
+            for server in servers:
+                server.shutdown(); server.server_close()
+            for node in reversed(nodes):
+                node.close()
 
 
 def load_tests(loader, tests, pattern):

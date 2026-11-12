@@ -17,6 +17,7 @@ static class Worker
     private const int MaxBytes = 2_000_000;
     private static int ComputeThreads = 4;
     private static SemaphoreSlim ComputeSlots = new SemaphoreSlim(4, 4);
+    private static int FrameTimeoutMs;
     private static readonly UTF8Encoding Utf8 = new UTF8Encoding(false, true);
     private static readonly Regex Decimal = new Regex(@"\A[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?\z", RegexOptions.CultureInvariant);
     static async Task Main(string[] args)
@@ -26,35 +27,49 @@ static class Worker
         if (ComputeThreads < 1 || ComputeThreads > 256) throw new ArgumentException("invalid_threads");
         ComputeSlots.Dispose();
         ComputeSlots = new SemaphoreSlim(ComputeThreads, ComputeThreads);
+        FrameTimeoutMs = Setting("PC3_WORKER_TIMEOUT_MS", 15000, 100, 300000);
+        using var connections = new SemaphoreSlim(Setting("PC3_WORKER_MAX_CLIENTS", 64, 1, 1024));
         var listener = new TcpListener(IPAddress.Any, port);
         listener.Start();
         Console.WriteLine($"WorkerCSharp escuchando en {port}, compute_threads={ComputeThreads}");
         while (true)
         {
             TcpClient client = await listener.AcceptTcpClientAsync();
-            _ = Task.Run(() => Handle(client));
+            if (!connections.Wait(0)) { client.Dispose(); continue; }
+            _ = Task.Run(() => {
+                try { Handle(client); }
+                finally { connections.Release(); }
+            });
         }
+    }
+
+    static int Setting(string name, int fallback, int minimum, int maximum)
+    {
+        string? raw = Environment.GetEnvironmentVariable(name);
+        int value = raw is null ? fallback : int.Parse(raw, CultureInfo.InvariantCulture);
+        if (value < minimum || value > maximum) throw new ArgumentException("invalid_worker_limits");
+        return value;
     }
 
     static void Handle(TcpClient client)
     {
         using (client)
         {
-            client.ReceiveTimeout = 15000;
-            client.SendTimeout = 15000;
+            client.ReceiveTimeout = FrameTimeoutMs;
+            client.SendTimeout = FrameTimeoutMs;
             using NetworkStream stream = client.GetStream();
             try
             {
                 while (true)
                 {
-                    string? request = ReadFrame(stream);
+                    string? request = ReadFrame(stream, client);
                     if (request is null) return;
                     string response;
                     try
                     {
                         string command = request.Split('|', 2)[0];
                         bool limited = command == "JOB" || command == "CONV" || command == "MLP";
-                        if (limited && !ComputeSlots.Wait(15000))
+                        if (limited && !ComputeSlots.Wait(FrameTimeoutMs))
                         {
                             string[] fields = request.Split('|');
                             string ids = command == "JOB" ? string.Join("|", new[] { 1, 2 }.Select(
@@ -82,21 +97,25 @@ static class Worker
         }
     }
 
-    static string? ReadFrame(Stream stream)
+    static string? ReadFrame(Stream stream, TcpClient client)
     {
+        long end = Stopwatch.GetTimestamp() + (long)FrameTimeoutMs*Stopwatch.Frequency/1000;
         byte[] header = new byte[4];
-        if (!ReadExact(stream, header, allowEof: true)) return null;
+        if (!ReadExact(stream, client, header, end, allowEof: true)) return null;
         uint length = BinaryPrimitives.ReadUInt32BigEndian(header);
         if (length == 0 || length > MaxBytes) throw new IOException("invalid_length");
         byte[] data = new byte[(int)length];
-        ReadExact(stream, data, allowEof: false);
+        ReadExact(stream, client, data, end, allowEof: false);
         return Utf8.GetString(data);
     }
-    static bool ReadExact(Stream stream, byte[] data, bool allowEof)
+    static bool ReadExact(Stream stream, TcpClient client, byte[] data, long end, bool allowEof)
     {
         int read = 0;
         while (read < data.Length)
         {
+            long remaining = end - Stopwatch.GetTimestamp();
+            if (remaining <= 0) throw new IOException("frame_timeout");
+            client.ReceiveTimeout = (int)Math.Max(1, remaining*1000/Stopwatch.Frequency);
             int n = stream.Read(data, read, data.Length - read);
             if (n == 0)
             {

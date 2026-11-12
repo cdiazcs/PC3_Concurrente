@@ -1,0 +1,245 @@
+{
+  "scope": "preliminary real AMQP local, not full PC3 transactions",
+  "runs": [
+    {
+      "scope": "real RabbitMQ isolated queues localhost; not backend/BD/client transaction test",
+      "timestamp": "2026-11-12T08:13:47.011516Z",
+      "pika": "1.3.2",
+      "python": "3.14.4",
+      "configuration": {
+        "concurrency": 1,
+        "prefetchPerConsumer": 1,
+        "inflight": 32,
+        "profiles": "alternating repository-v1/backend-8901cfb",
+        "brokerHost": "127.0.0.1",
+        "brokerPort": 35069,
+        "vhost": "pc3_ia_test",
+        "requestQueue": "ia-probe-b8fcc51757c94a6386a1d1d5c04c002f-input",
+        "resultQueue": "ia-probe-b8fcc51757c94a6386a1d1d5c04c002f-result"
+      },
+      "weights_sha256": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+      "weights_unchanged": true,
+      "loads": [
+        {
+          "requests": 1,
+          "success": 1,
+          "errors": 0,
+          "meanMs": 7.7862389998699655,
+          "p95Ms": 7.7862389998699655,
+          "throughputRps": 120.80697123702475,
+          "totalSeconds": 0.008277668000118865,
+          "readyQueuePeakObserved": 0,
+          "consumerCount": 1
+        },
+        {
+          "requests": 10,
+          "success": 10,
+          "errors": 0,
+          "meanMs": 14.73573529983696,
+          "p95Ms": 26.028709999991406,
+          "throughputRps": 310.40696463639074,
+          "totalSeconds": 0.03221577200019965,
+          "readyQueuePeakObserved": 7,
+          "consumerCount": 1
+        },
+        {
+          "requests": 50,
+          "success": 50,
+          "errors": 0,
+          "meanMs": 63.00515895996796,
+          "p95Ms": 103.13718599991262,
+          "throughputRps": 306.3272981698467,
+          "totalSeconds": 0.16322410800057696,
+          "readyQueuePeakObserved": 30,
+          "consumerCount": 1
+        },
+        {
+          "requests": 100,
+          "success": 100,
+          "errors": 0,
+          "meanMs": 82.81259883999155,
+          "p95Ms": 114.26596900037111,
+          "throughputRps": 308.3808072223223,
+          "totalSeconds": 0.3242743959999643,
+          "readyQueuePeakObserved": 31,
+          "consumerCount": 1
+        },
+        {
+          "requests": 1000,
+          "success": 1000,
+          "errors": 0,
+          "meanMs": 119.46577066101418,
+          "p95Ms": 133.1986320001306,
+          "throughputRps": 261.40461477484894,
+          "totalSeconds": 3.8254871700000876,
+          "readyQueuePeakObserved": 31,
+          "consumerCount": 1
+        }
+      ],
+      "csv_sha256": "fe217b043c5fd0af5b670ef61f7a8c5e5ff5aae443d7084dd82be2d96cbdcc09",
+      "unackedQueueMessages": "not measured: management API not enabled",
+      "latency_scope": "publish until producer receives result; includes confirms, polling and instrumentation"
+    },
+    {
+      "scope": "real RabbitMQ isolated queues localhost; not backend/BD/client transaction test",
+      "timestamp": "2026-11-12T08:13:51.326915Z",
+      "pika": "1.3.2",
+      "python": "3.14.4",
+      "configuration": {
+        "concurrency": 2,
+        "prefetchPerConsumer": 1,
+        "inflight": 32,
+        "profiles": "alternating repository-v1/backend-8901cfb",
+        "brokerHost": "127.0.0.1",
+        "brokerPort": 35069,
+        "vhost": "pc3_ia_test",
+        "requestQueue": "ia-probe-e302f6db8c5643f9a6121ff66b736239-input",
+        "resultQueue": "ia-probe-e302f6db8c5643f9a6121ff66b736239-result"
+      },
+      "weights_sha256": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+      "weights_unchanged": true,
+      "loads": [
+        {
+          "requests": 1,
+          "success": 1,
+          "errors": 0,
+          "meanMs": 8.505399000569014,
+          "p95Ms": 8.505399000569014,
+          "throughputRps": 109.75284646309977,
+          "totalSeconds": 0.009111381000366237,
+          "readyQueuePeakObserved": 0,
+          "consumerCount": 2
+        },
+        {
+          "requests": 10,
+          "success": 10,
+          "errors": 0,
+          "meanMs": 13.843941099912627,
+          "p95Ms": 20.527385000605136,
+          "throughputRps": 351.3076125995821,
+          "totalSeconds": 0.028465082000366237,
+          "readyQueuePeakObserved": 6,
+          "consumerCount": 2
+        },
+        {
+          "requests": 50,
+          "success": 50,
+          "errors": 0,
+          "meanMs": 53.96660549993612,
+          "p95Ms": 85.66267999958654,
+          "throughputRps": 359.6237524250475,
+          "totalSeconds": 0.13903419799953554,
+          "readyQueuePeakObserved": 30,
+          "consumerCount": 2
+        },
+        {
+          "requests": 100,
+          "success": 100,
+          "errors": 0,
+          "meanMs": 71.70771548995617,
+          "p95Ms": 92.8551110000626,
+          "throughputRps": 356.9522968842064,
+          "totalSeconds": 0.28014947900010156,
+          "readyQueuePeakObserved": 30,
+          "consumerCount": 2
+        },
+        {
+          "requests": 1000,
+          "success": 1000,
+          "errors": 0,
+          "meanMs": 99.9684094870181,
+          "p95Ms": 115.59146699983103,
+          "throughputRps": 311.7618486803556,
+          "totalSeconds": 3.2075765660001707,
+          "readyQueuePeakObserved": 31,
+          "consumerCount": 2
+        }
+      ],
+      "csv_sha256": "d977471bb70da3e8faad99d62bd3d7a8d2370c286c15414b0484f851ca4a5811",
+      "unackedQueueMessages": "not measured: management API not enabled",
+      "latency_scope": "publish until producer receives result; includes confirms, polling and instrumentation"
+    },
+    {
+      "scope": "real RabbitMQ isolated queues localhost; not backend/BD/client transaction test",
+      "timestamp": "2026-11-12T08:13:55.830143Z",
+      "pika": "1.3.2",
+      "python": "3.14.4",
+      "configuration": {
+        "concurrency": 4,
+        "prefetchPerConsumer": 1,
+        "inflight": 32,
+        "profiles": "alternating repository-v1/backend-8901cfb",
+        "brokerHost": "127.0.0.1",
+        "brokerPort": 35069,
+        "vhost": "pc3_ia_test",
+        "requestQueue": "ia-probe-9821c2d9fe3a42deaeef977b8b582c6d-input",
+        "resultQueue": "ia-probe-9821c2d9fe3a42deaeef977b8b582c6d-result"
+      },
+      "weights_sha256": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+      "weights_unchanged": true,
+      "loads": [
+        {
+          "requests": 1,
+          "success": 1,
+          "errors": 0,
+          "meanMs": 8.996466999633412,
+          "p95Ms": 8.996466999633412,
+          "throughputRps": 104.50501252815748,
+          "totalSeconds": 0.00956891900023038,
+          "readyQueuePeakObserved": 0,
+          "consumerCount": 4
+        },
+        {
+          "requests": 10,
+          "success": 10,
+          "errors": 0,
+          "meanMs": 13.751377000062348,
+          "p95Ms": 22.817791999841575,
+          "throughputRps": 354.5938088935559,
+          "totalSeconds": 0.028201281999827188,
+          "readyQueuePeakObserved": 6,
+          "consumerCount": 4
+        },
+        {
+          "requests": 50,
+          "success": 50,
+          "errors": 0,
+          "meanMs": 53.93601771995236,
+          "p95Ms": 85.05575099934504,
+          "throughputRps": 356.53677010044663,
+          "totalSeconds": 0.14023799000005965,
+          "readyQueuePeakObserved": 27,
+          "consumerCount": 4
+        },
+        {
+          "requests": 100,
+          "success": 100,
+          "errors": 0,
+          "meanMs": 79.87670679993244,
+          "p95Ms": 106.49251799986814,
+          "throughputRps": 326.4840132484732,
+          "totalSeconds": 0.3062937109998529,
+          "readyQueuePeakObserved": 29,
+          "consumerCount": 4
+        },
+        {
+          "requests": 1000,
+          "success": 1000,
+          "errors": 0,
+          "meanMs": 104.02327426700685,
+          "p95Ms": 131.30496499979927,
+          "throughputRps": 299.5765629977642,
+          "totalSeconds": 3.338044838999849,
+          "readyQueuePeakObserved": 30,
+          "consumerCount": 4
+        }
+      ],
+      "csv_sha256": "062fa280479e063751d45a3802a756ab4cd077cd95d85afcec219183a996e209",
+      "unackedQueueMessages": "not measured: management API not enabled",
+      "latency_scope": "publish until producer receives result; includes confirms, polling and instrumentation"
+    }
+  ],
+  "requests": 3483,
+  "success": 3483,
+  "errors": 0
+}

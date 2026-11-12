@@ -1,0 +1,41 @@
+{
+  "scope": "real AMQP producer -> IA -> CNN -> RabbitMQ -> result consumer, localhost",
+  "request_sanitized": {
+    "schemaVersion": 1,
+    "idSolicitud": "phase3-demo-real",
+    "idCliente": "unit-client",
+    "modeloDestino": "A",
+    "timestamp": "2026-11-12T08:00:00Z",
+    "intento": 1,
+    "tipo": "CLASIFICAR_IMAGEN",
+    "payload": {
+      "mimeType": "image/png",
+      "imagenBase64": "omitted from evidence; source identified by hash",
+      "source": "model/examples/circulo-0.png",
+      "sourceSha256": "9ed827285ae1e9922b63d8351086c1680abd5af23052859ecb8f56c035afdd73"
+    }
+  },
+  "actual_result": {
+    "schemaVersion": 1,
+    "tipo": "RESULTADO_CLASIFICACION",
+    "idSolicitud": "phase3-demo-real",
+    "idCliente": "unit-client",
+    "modeloDestino": "A",
+    "timestamp": "2026-11-12T08:15:44.928775Z",
+    "estado": "COMPLETADA",
+    "versionPesos": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+    "error": null,
+    "payload": {
+      "etiqueta": "circulo",
+      "probabilidad": 0.9999982471200074,
+      "probabilidades": {
+        "circulo": 0.9999982471200074,
+        "cruz": 9.965471289921848e-09,
+        "triangulo": 1.7429145213097573e-06
+      },
+      "duracionMs": 1.1536570000316715
+    }
+  },
+  "amqp_correlation_id": "phase3-demo-real",
+  "delivery_mode": 2
+}

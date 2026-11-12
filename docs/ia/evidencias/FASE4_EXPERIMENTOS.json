@@ -1,0 +1,890 @@
+{
+  "scope": "3-epoch correctness/preliminary training; all processes localhost",
+  "officialWeightsUnchanged": true,
+  "weightsSha256": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+  "records": [
+    {
+      "name": "sequential",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/sequential.time.txt",
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train_synchronous",
+        "--mode",
+        "sequential",
+        "--output",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/sequential",
+        "--epochs",
+        "3",
+        "--batch-size",
+        "24",
+        "--seed",
+        "20261022",
+        "--processes",
+        "2"
+      ],
+      "launchSeconds": 11.278151386999525,
+      "maxRssKiB": 37864,
+      "report": {
+        "runId": "1a1b63fa9c3e4a868b08bcb16cfa9f42",
+        "configuration": {
+          "epochs": 3,
+          "batchSize": 24,
+          "seed": 20261022,
+          "learningRate": 0.003,
+          "datasetHash": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+          "validationHash": "4198c89de7c06c93aea95bb40cb77f9132f5c545f101e37771252a318c194687",
+          "trainingSampleCount": 720
+        },
+        "complete": true,
+        "modelVersion": 90,
+        "adamSteps": 90,
+        "bestEpoch": 3,
+        "history": [
+          {
+            "epoch": 1,
+            "trainCrossEntropy": 0.8651753435491334,
+            "validationCrossEntropy": 0.6054701191117176,
+            "validationAccuracy": 0.8111111111111111,
+            "epochSeconds": 3.1070984809994115
+          },
+          {
+            "epoch": 2,
+            "trainCrossEntropy": 0.3749747747631308,
+            "validationCrossEntropy": 0.1747747925664371,
+            "validationAccuracy": 0.9722222222222222,
+            "epochSeconds": 3.3390173220004726
+          },
+          {
+            "epoch": 3,
+            "trainCrossEntropy": 0.09558399031186689,
+            "validationCrossEntropy": 0.04674407442731196,
+            "validationAccuracy": 1.0,
+            "epochSeconds": 3.3326988639992123
+          }
+        ],
+        "secondsThisInvocation": 10.079206856999917,
+        "workersObserved": [
+          {
+            "workerId": "cristian:135379",
+            "pid": 135379,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "gradient-compute"
+          }
+        ],
+        "physicalDistributedNodesVerified": false,
+        "backendStats": {
+          "retries": 0,
+          "failedTasks": 0
+        },
+        "finalTraining": {
+          "accuracy": 0.9986111111111111,
+          "cross_entropy": 0.05078986861665274
+        },
+        "finalValidation": {
+          "accuracy": 1.0,
+          "cross_entropy": 0.04674407442731196
+        },
+        "mode": "sequential",
+        "test": {
+          "classes": [
+            "circulo",
+            "cruz",
+            "triangulo"
+          ],
+          "samples": 300,
+          "accuracy": 1.0,
+          "cross_entropy": 0.05451329364169657,
+          "confusion_matrix_rows_true_columns_predicted": [
+            [
+              100,
+              0,
+              0
+            ],
+            [
+              0,
+              100,
+              0
+            ],
+            [
+              0,
+              0,
+              100
+            ]
+          ],
+          "per_class_recall": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy_definition": "correct / true samples of that class (recall)",
+          "model_configuration": {
+            "input_shape": [
+              16,
+              16,
+              1
+            ],
+            "convolution": {
+              "filters": 2,
+              "kernel": [
+                3,
+                3
+              ],
+              "stride": 1,
+              "padding": "valid",
+              "bias": false,
+              "activation": "relu"
+            },
+            "pooling": {
+              "type": "max",
+              "size": [
+                2,
+                2
+              ],
+              "stride": 2
+            },
+            "flatten": 98,
+            "dense_units": [
+              8,
+              3
+            ],
+            "dense_activations": [
+              "relu",
+              "softmax"
+            ],
+            "parameter_sections": {
+              "FILTER1": 9,
+              "FILTER2": 9,
+              "W1": 784,
+              "B1": 8,
+              "W2": 24,
+              "B2": 3
+            },
+            "trainable_parameters": 837
+          }
+        },
+        "selectedWeightsSha256": "ba0f8dca11239f24cd6d1f56533906c9c75ace10cae93d8d8d1d16d3abf4fa34",
+        "sourceSha256": {
+          "model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+          "training_backends.py": "35250550f8efab5576019910e7dcb4525c930a38dc27fc57e262a0353d5d65d7",
+          "train.py": "7a3a5dea1091170414a4505c49f667fc42dc289493d6cf7f7ce5017f6b4bffb3",
+          "training_amqp.py": "06a602c4201b28b8f01d3e0ba822591ad01a1d382801d764d8ff13898db4b223",
+          "__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+          "images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+          "model_state.py": "12f70d1faa99c63b40d3869c06f6c296fb9d59a59f3ae0de816b6c3e937fe4dd",
+          "gradient_protocol.py": "dcbc0185bcbe262b7bb7ae93ed1c0dc124ee6e57211972fcb22e785260f5c39c",
+          "train_synchronous.py": "8657115b26e0b54982b1defc3dff0c704553c0fe8212e864fc5171755a9df68d",
+          "predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+          "evaluate.py": "afca2de8084a941c3a201b8103b0a53001d316e9cd5d1512297fd47e06f69c6f",
+          "training_math.py": "15dba277c5d17eae2ab68a345bd10e5536e8529e6808407f82d2fcf0a528ca71",
+          "dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936"
+        }
+      },
+      "maxSelectedWeightDifferenceFromSequential": 0.0,
+      "phaseTotalsSeconds": {
+        "mapSeconds": 3.2140049149966217,
+        "gradientComputeSecondsSum": 3.212444238997705,
+        "gradientComputeCpuSecondsSum": 3.140788240999999,
+        "aggregateSeconds": 0.11325072300405736,
+        "updateSeconds": 0.15723012200032827,
+        "stepSeconds": 3.4844857600010073
+      },
+      "speedupLaunchVsSequential": 1.0,
+      "completedSteps": 90,
+      "rawArtifacts": {
+        "report.json": "d387ea74f14e520ad28dbb9c7944766fba072de45b665e8f165f5a1fc2f05e05",
+        "checkpoint.json": "32eaad8bda584e2df0141a4744783b0a2d33659500148f7770746879d7635546",
+        "weights.txt": "ba0f8dca11239f24cd6d1f56533906c9c75ace10cae93d8d8d1d16d3abf4fa34"
+      }
+    },
+    {
+      "name": "parallel",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/parallel.time.txt",
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train_synchronous",
+        "--mode",
+        "parallel",
+        "--output",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/parallel",
+        "--epochs",
+        "3",
+        "--batch-size",
+        "24",
+        "--seed",
+        "20261022",
+        "--processes",
+        "2"
+      ],
+      "launchSeconds": 10.36454953700013,
+      "maxRssKiB": 39408,
+      "report": {
+        "runId": "bc020136d0a840b3b816cf3a08410d2f",
+        "configuration": {
+          "epochs": 3,
+          "batchSize": 24,
+          "seed": 20261022,
+          "learningRate": 0.003,
+          "datasetHash": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+          "validationHash": "4198c89de7c06c93aea95bb40cb77f9132f5c545f101e37771252a318c194687",
+          "trainingSampleCount": 720
+        },
+        "complete": true,
+        "modelVersion": 90,
+        "adamSteps": 90,
+        "bestEpoch": 3,
+        "history": [
+          {
+            "epoch": 1,
+            "trainCrossEntropy": 0.8651753435491336,
+            "validationCrossEntropy": 0.6054701191117176,
+            "validationAccuracy": 0.8111111111111111,
+            "epochSeconds": 2.675134674000219
+          },
+          {
+            "epoch": 2,
+            "trainCrossEntropy": 0.3749747747631308,
+            "validationCrossEntropy": 0.1747747925664371,
+            "validationAccuracy": 0.9722222222222222,
+            "epochSeconds": 3.0492394709999644
+          },
+          {
+            "epoch": 3,
+            "trainCrossEntropy": 0.09558399031186689,
+            "validationCrossEntropy": 0.04674407442731195,
+            "validationAccuracy": 1.0,
+            "epochSeconds": 2.943633593999948
+          }
+        ],
+        "secondsThisInvocation": 8.91396428600001,
+        "workersObserved": [
+          {
+            "workerId": "cristian:135464",
+            "pid": 135464,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "gradient-compute"
+          },
+          {
+            "workerId": "cristian:135461",
+            "pid": 135461,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "gradient-compute"
+          }
+        ],
+        "physicalDistributedNodesVerified": false,
+        "backendStats": {
+          "retries": 0,
+          "failedTasks": 0,
+          "poolStartupSeconds": 0.27671207599996706,
+          "configuredProcesses": 2
+        },
+        "finalTraining": {
+          "accuracy": 0.9986111111111111,
+          "cross_entropy": 0.05078986861665275
+        },
+        "finalValidation": {
+          "accuracy": 1.0,
+          "cross_entropy": 0.04674407442731195
+        },
+        "mode": "parallel",
+        "test": {
+          "classes": [
+            "circulo",
+            "cruz",
+            "triangulo"
+          ],
+          "samples": 300,
+          "accuracy": 1.0,
+          "cross_entropy": 0.05451329364169657,
+          "confusion_matrix_rows_true_columns_predicted": [
+            [
+              100,
+              0,
+              0
+            ],
+            [
+              0,
+              100,
+              0
+            ],
+            [
+              0,
+              0,
+              100
+            ]
+          ],
+          "per_class_recall": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy_definition": "correct / true samples of that class (recall)",
+          "model_configuration": {
+            "input_shape": [
+              16,
+              16,
+              1
+            ],
+            "convolution": {
+              "filters": 2,
+              "kernel": [
+                3,
+                3
+              ],
+              "stride": 1,
+              "padding": "valid",
+              "bias": false,
+              "activation": "relu"
+            },
+            "pooling": {
+              "type": "max",
+              "size": [
+                2,
+                2
+              ],
+              "stride": 2
+            },
+            "flatten": 98,
+            "dense_units": [
+              8,
+              3
+            ],
+            "dense_activations": [
+              "relu",
+              "softmax"
+            ],
+            "parameter_sections": {
+              "FILTER1": 9,
+              "FILTER2": 9,
+              "W1": 784,
+              "B1": 8,
+              "W2": 24,
+              "B2": 3
+            },
+            "trainable_parameters": 837
+          }
+        },
+        "selectedWeightsSha256": "f93d981cecf11ef1c79bc64484e7f782b00db9abb2a396adff0a1c6ae91f9927",
+        "sourceSha256": {
+          "model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+          "training_backends.py": "35250550f8efab5576019910e7dcb4525c930a38dc27fc57e262a0353d5d65d7",
+          "train.py": "7a3a5dea1091170414a4505c49f667fc42dc289493d6cf7f7ce5017f6b4bffb3",
+          "training_amqp.py": "06a602c4201b28b8f01d3e0ba822591ad01a1d382801d764d8ff13898db4b223",
+          "__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+          "images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+          "model_state.py": "12f70d1faa99c63b40d3869c06f6c296fb9d59a59f3ae0de816b6c3e937fe4dd",
+          "gradient_protocol.py": "dcbc0185bcbe262b7bb7ae93ed1c0dc124ee6e57211972fcb22e785260f5c39c",
+          "train_synchronous.py": "8657115b26e0b54982b1defc3dff0c704553c0fe8212e864fc5171755a9df68d",
+          "predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+          "evaluate.py": "afca2de8084a941c3a201b8103b0a53001d316e9cd5d1512297fd47e06f69c6f",
+          "training_math.py": "15dba277c5d17eae2ab68a345bd10e5536e8529e6808407f82d2fcf0a528ca71",
+          "dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936"
+        }
+      },
+      "maxSelectedWeightDifferenceFromSequential": 1.1102230246251565e-16,
+      "phaseTotalsSeconds": {
+        "mapSeconds": 2.0129511020049904,
+        "gradientComputeSecondsSum": 3.6977194129949567,
+        "gradientComputeCpuSecondsSum": 3.6884030009999997,
+        "aggregateSeconds": 0.18810314399343042,
+        "updateSeconds": 0.15082510800311866,
+        "stepSeconds": 2.3518793540015395
+      },
+      "speedupLaunchVsSequential": 1.0881467975755195,
+      "completedSteps": 90,
+      "rawArtifacts": {
+        "report.json": "8d0c36ac829c5ca5c4c49cfe3f15a7d392fdd7461aadcb14f8eabec115df78cb",
+        "checkpoint.json": "5538882a3596ce43e70651769d48feef0d93f5e6cfbbb0a096d61049255be557",
+        "weights.txt": "f93d981cecf11ef1c79bc64484e7f782b00db9abb2a396adff0a1c6ae91f9927"
+      }
+    },
+    {
+      "name": "amqp-local",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/amqp-local.time.txt",
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train_synchronous",
+        "--mode",
+        "amqp",
+        "--output",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/amqp-local",
+        "--epochs",
+        "3",
+        "--batch-size",
+        "24",
+        "--seed",
+        "20261022",
+        "--processes",
+        "2"
+      ],
+      "launchSeconds": 11.332238599999982,
+      "maxRssKiB": 42936,
+      "report": {
+        "runId": "478be98862b947568e3f106b418e7f0c",
+        "configuration": {
+          "epochs": 3,
+          "batchSize": 24,
+          "seed": 20261022,
+          "learningRate": 0.003,
+          "datasetHash": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+          "validationHash": "4198c89de7c06c93aea95bb40cb77f9132f5c545f101e37771252a318c194687",
+          "trainingSampleCount": 720
+        },
+        "complete": true,
+        "modelVersion": 90,
+        "adamSteps": 90,
+        "bestEpoch": 3,
+        "history": [
+          {
+            "epoch": 1,
+            "trainCrossEntropy": 0.8651753435491336,
+            "validationCrossEntropy": 0.6054701191117176,
+            "validationAccuracy": 0.8111111111111111,
+            "epochSeconds": 3.0228666619996147
+          },
+          {
+            "epoch": 2,
+            "trainCrossEntropy": 0.3749747747631308,
+            "validationCrossEntropy": 0.1747747925664371,
+            "validationAccuracy": 0.9722222222222222,
+            "epochSeconds": 3.603979079000055
+          },
+          {
+            "epoch": 3,
+            "trainCrossEntropy": 0.09558399031186689,
+            "validationCrossEntropy": 0.04674407442731195,
+            "validationAccuracy": 1.0,
+            "epochSeconds": 3.1782337180002287
+          }
+        ],
+        "secondsThisInvocation": 10.050257126999895,
+        "workersObserved": [
+          {
+            "workerId": "local-worker-0:135521",
+            "pid": 135521,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "gradient-compute"
+          },
+          {
+            "workerId": "local-worker-1:135522",
+            "pid": 135522,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "gradient-compute"
+          }
+        ],
+        "physicalDistributedNodesVerified": false,
+        "backendStats": {
+          "retries": 0,
+          "failedTasks": 0,
+          "duplicateResults": 0,
+          "discardedResults": 0,
+          "publishSeconds": 0.555582937001418,
+          "receiveSeconds": 2.652883064000889
+        },
+        "finalTraining": {
+          "accuracy": 0.9986111111111111,
+          "cross_entropy": 0.05078986861665275
+        },
+        "finalValidation": {
+          "accuracy": 1.0,
+          "cross_entropy": 0.04674407442731195
+        },
+        "mode": "amqp",
+        "test": {
+          "classes": [
+            "circulo",
+            "cruz",
+            "triangulo"
+          ],
+          "samples": 300,
+          "accuracy": 1.0,
+          "cross_entropy": 0.05451329364169657,
+          "confusion_matrix_rows_true_columns_predicted": [
+            [
+              100,
+              0,
+              0
+            ],
+            [
+              0,
+              100,
+              0
+            ],
+            [
+              0,
+              0,
+              100
+            ]
+          ],
+          "per_class_recall": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy_definition": "correct / true samples of that class (recall)",
+          "model_configuration": {
+            "input_shape": [
+              16,
+              16,
+              1
+            ],
+            "convolution": {
+              "filters": 2,
+              "kernel": [
+                3,
+                3
+              ],
+              "stride": 1,
+              "padding": "valid",
+              "bias": false,
+              "activation": "relu"
+            },
+            "pooling": {
+              "type": "max",
+              "size": [
+                2,
+                2
+              ],
+              "stride": 2
+            },
+            "flatten": 98,
+            "dense_units": [
+              8,
+              3
+            ],
+            "dense_activations": [
+              "relu",
+              "softmax"
+            ],
+            "parameter_sections": {
+              "FILTER1": 9,
+              "FILTER2": 9,
+              "W1": 784,
+              "B1": 8,
+              "W2": 24,
+              "B2": 3
+            },
+            "trainable_parameters": 837
+          }
+        },
+        "selectedWeightsSha256": "f93d981cecf11ef1c79bc64484e7f782b00db9abb2a396adff0a1c6ae91f9927",
+        "sourceSha256": {
+          "model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+          "training_backends.py": "35250550f8efab5576019910e7dcb4525c930a38dc27fc57e262a0353d5d65d7",
+          "train.py": "7a3a5dea1091170414a4505c49f667fc42dc289493d6cf7f7ce5017f6b4bffb3",
+          "training_amqp.py": "06a602c4201b28b8f01d3e0ba822591ad01a1d382801d764d8ff13898db4b223",
+          "__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+          "images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+          "model_state.py": "12f70d1faa99c63b40d3869c06f6c296fb9d59a59f3ae0de816b6c3e937fe4dd",
+          "gradient_protocol.py": "dcbc0185bcbe262b7bb7ae93ed1c0dc124ee6e57211972fcb22e785260f5c39c",
+          "train_synchronous.py": "8657115b26e0b54982b1defc3dff0c704553c0fe8212e864fc5171755a9df68d",
+          "predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+          "evaluate.py": "afca2de8084a941c3a201b8103b0a53001d316e9cd5d1512297fd47e06f69c6f",
+          "training_math.py": "15dba277c5d17eae2ab68a345bd10e5536e8529e6808407f82d2fcf0a528ca71",
+          "dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936"
+        }
+      },
+      "deployment": {
+        "broker": "RabbitMQ 4.4.0 localhost",
+        "workerParentProcesses": 2,
+        "localComputeProcessesPerWorker": 1,
+        "independentMachines": false
+      },
+      "maxSelectedWeightDifferenceFromSequential": 1.1102230246251565e-16,
+      "phaseTotalsSeconds": {
+        "mapSeconds": 3.2117697339972437,
+        "gradientComputeSecondsSum": 3.6960876730126984,
+        "gradientComputeCpuSecondsSum": 3.6863455640000025,
+        "aggregateSeconds": 0.18609447099970566,
+        "updateSeconds": 0.15299288400365185,
+        "stepSeconds": 3.5508570890006013
+      },
+      "speedupLaunchVsSequential": 0.9952271378224902,
+      "completedSteps": 90,
+      "rawArtifacts": {
+        "report.json": "2ade98450dfc24816e5dac44eb551fc4d23dbf07cb299ddeca4b4ab9f15e4198",
+        "checkpoint.json": "046c650cc20dfb9b3ec70228ee349f7066430b1ae2c01715c03b905ccfafd46f",
+        "weights.txt": "f93d981cecf11ef1c79bc64484e7f782b00db9abb2a396adff0a1c6ae91f9927"
+      }
+    },
+    {
+      "name": "amqp-local-parallel",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/amqp-local-parallel.time.txt",
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train_synchronous",
+        "--mode",
+        "amqp",
+        "--output",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase4-experiments/amqp-local-parallel",
+        "--epochs",
+        "3",
+        "--batch-size",
+        "24",
+        "--seed",
+        "20261022",
+        "--processes",
+        "2"
+      ],
+      "launchSeconds": 11.10608467200018,
+      "maxRssKiB": 43068,
+      "report": {
+        "runId": "00d7feede63240b0b16474b66ff02770",
+        "configuration": {
+          "epochs": 3,
+          "batchSize": 24,
+          "seed": 20261022,
+          "learningRate": 0.003,
+          "datasetHash": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+          "validationHash": "4198c89de7c06c93aea95bb40cb77f9132f5c545f101e37771252a318c194687",
+          "trainingSampleCount": 720
+        },
+        "complete": true,
+        "modelVersion": 90,
+        "adamSteps": 90,
+        "bestEpoch": 3,
+        "history": [
+          {
+            "epoch": 1,
+            "trainCrossEntropy": 0.8651753435491336,
+            "validationCrossEntropy": 0.6054701191117176,
+            "validationAccuracy": 0.8111111111111111,
+            "epochSeconds": 3.1709563429994887
+          },
+          {
+            "epoch": 2,
+            "trainCrossEntropy": 0.3749747747631307,
+            "validationCrossEntropy": 0.1747747925664371,
+            "validationAccuracy": 0.9722222222222222,
+            "epochSeconds": 3.301592967999568
+          },
+          {
+            "epoch": 3,
+            "trainCrossEntropy": 0.0955839903118669,
+            "validationCrossEntropy": 0.04674407442731195,
+            "validationAccuracy": 1.0,
+            "epochSeconds": 3.3322133129995564
+          }
+        ],
+        "secondsThisInvocation": 10.05238559099962,
+        "workersObserved": [
+          {
+            "workerId": "local-worker-0:135617",
+            "pid": 135617,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "local-gradient-pool-owner"
+          },
+          {
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "pid": 135637,
+            "workerId": "cristian:135637",
+            "role": "gradient-compute"
+          },
+          {
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "pid": 135632,
+            "workerId": "cristian:135632",
+            "role": "gradient-compute"
+          },
+          {
+            "workerId": "local-worker-1:135618",
+            "pid": 135618,
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "role": "local-gradient-pool-owner"
+          },
+          {
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "pid": 135640,
+            "workerId": "cristian:135640",
+            "role": "gradient-compute"
+          },
+          {
+            "hostname": "cristian",
+            "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+            "pid": 135634,
+            "workerId": "cristian:135634",
+            "role": "gradient-compute"
+          }
+        ],
+        "physicalDistributedNodesVerified": false,
+        "backendStats": {
+          "retries": 0,
+          "failedTasks": 0,
+          "duplicateResults": 0,
+          "discardedResults": 0,
+          "publishSeconds": 0.5639056780019018,
+          "receiveSeconds": 3.1104272449993005
+        },
+        "finalTraining": {
+          "accuracy": 0.9986111111111111,
+          "cross_entropy": 0.05078986861665273
+        },
+        "finalValidation": {
+          "accuracy": 1.0,
+          "cross_entropy": 0.04674407442731195
+        },
+        "mode": "amqp",
+        "test": {
+          "classes": [
+            "circulo",
+            "cruz",
+            "triangulo"
+          ],
+          "samples": 300,
+          "accuracy": 1.0,
+          "cross_entropy": 0.05451329364169657,
+          "confusion_matrix_rows_true_columns_predicted": [
+            [
+              100,
+              0,
+              0
+            ],
+            [
+              0,
+              100,
+              0
+            ],
+            [
+              0,
+              0,
+              100
+            ]
+          ],
+          "per_class_recall": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy": {
+            "circulo": 1.0,
+            "cruz": 1.0,
+            "triangulo": 1.0
+          },
+          "per_class_accuracy_definition": "correct / true samples of that class (recall)",
+          "model_configuration": {
+            "input_shape": [
+              16,
+              16,
+              1
+            ],
+            "convolution": {
+              "filters": 2,
+              "kernel": [
+                3,
+                3
+              ],
+              "stride": 1,
+              "padding": "valid",
+              "bias": false,
+              "activation": "relu"
+            },
+            "pooling": {
+              "type": "max",
+              "size": [
+                2,
+                2
+              ],
+              "stride": 2
+            },
+            "flatten": 98,
+            "dense_units": [
+              8,
+              3
+            ],
+            "dense_activations": [
+              "relu",
+              "softmax"
+            ],
+            "parameter_sections": {
+              "FILTER1": 9,
+              "FILTER2": 9,
+              "W1": 784,
+              "B1": 8,
+              "W2": 24,
+              "B2": 3
+            },
+            "trainable_parameters": 837
+          }
+        },
+        "selectedWeightsSha256": "aeda2df41235beaf64a5678e9d508e0cd2804b17e5b44fee8f60795f750960a3",
+        "sourceSha256": {
+          "model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+          "training_backends.py": "35250550f8efab5576019910e7dcb4525c930a38dc27fc57e262a0353d5d65d7",
+          "train.py": "7a3a5dea1091170414a4505c49f667fc42dc289493d6cf7f7ce5017f6b4bffb3",
+          "training_amqp.py": "06a602c4201b28b8f01d3e0ba822591ad01a1d382801d764d8ff13898db4b223",
+          "__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+          "images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+          "model_state.py": "12f70d1faa99c63b40d3869c06f6c296fb9d59a59f3ae0de816b6c3e937fe4dd",
+          "gradient_protocol.py": "dcbc0185bcbe262b7bb7ae93ed1c0dc124ee6e57211972fcb22e785260f5c39c",
+          "train_synchronous.py": "8657115b26e0b54982b1defc3dff0c704553c0fe8212e864fc5171755a9df68d",
+          "predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+          "evaluate.py": "afca2de8084a941c3a201b8103b0a53001d316e9cd5d1512297fd47e06f69c6f",
+          "training_math.py": "15dba277c5d17eae2ab68a345bd10e5536e8529e6808407f82d2fcf0a528ca71",
+          "dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936"
+        }
+      },
+      "deployment": {
+        "broker": "RabbitMQ 4.4.0 localhost",
+        "workerParentProcesses": 2,
+        "localComputeProcessesPerWorker": 2,
+        "independentMachines": false
+      },
+      "maxSelectedWeightDifferenceFromSequential": 1.1622647289044608e-16,
+      "phaseTotalsSeconds": {
+        "mapSeconds": 3.6777868149974893,
+        "gradientComputeSecondsSum": 3.5056496079960198,
+        "gradientComputeCpuSecondsSum": 5.1796642780000015,
+        "aggregateSeconds": 0.20345104200168862,
+        "updateSeconds": 0.17064282799492503,
+        "stepSeconds": 4.051880684994103
+      },
+      "speedupLaunchVsSequential": 1.0154930130717577,
+      "completedSteps": 90,
+      "rawArtifacts": {
+        "report.json": "036265302f85257508eab53d937f4f0f417f70d142e5a56f0efcd7d7620f99bc",
+        "checkpoint.json": "685bf386e6abde8c423182bb6337b8ad68f1b3f77bc834f67423e070a2c0d92a",
+        "weights.txt": "aeda2df41235beaf64a5678e9d508e0cd2804b17e5b44fee8f60795f750960a3"
+      }
+    }
+  ]
+}

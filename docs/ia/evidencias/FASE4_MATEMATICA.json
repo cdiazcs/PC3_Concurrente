@@ -1,0 +1,11 @@
+{
+  "partitionSizes": [
+    3,
+    2,
+    2
+  ],
+  "maxGradientDelta": 2.7755575615628914e-17,
+  "lossDelta": 0.0,
+  "maxOneAdamWeightDelta": 2.7755575615628914e-17,
+  "tolerance": 1e-12
+}

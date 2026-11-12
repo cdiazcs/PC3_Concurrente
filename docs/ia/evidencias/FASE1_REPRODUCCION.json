@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "scope": "sequential_training_and_synthetic_evaluation_only",
+  "external_evaluation": "PENDING: no independent documented images available",
+  "timestamp_utc": "2026-11-12T07:18:25.741614+00:00",
+  "environment": {
+    "python": "3.14.4",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+    "zlib_runtime": "1.3.1"
+  },
+  "source_sha256": {
+    "cnn_python/__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+    "cnn_python/dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936",
+    "cnn_python/evaluate.py": "54f5b6607e2eb5f874c339fb36ddd395350c45c809bae509174f8b58e711f1fb",
+    "cnn_python/images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+    "cnn_python/model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+    "cnn_python/predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+    "cnn_python/train.py": "5f71127981aa7e03195d3f93a91102a5cb8ea5b08b4e9e7a356b7aad83c464f7",
+    "scripts/validate_phase1.py": "35fb72b4b4f8ad36a0b72414fb5e0fef5e1e8fb7da70c3fb02f375c30cf4ba16"
+  },
+  "legacy_source_provenance": {
+    "model.py": {
+      "recorded_sha256": "eddd0777faabe6c9312e2e537bd84a9050a23e7e0ff0c7b69fb6e4ecb23d2959",
+      "current_sha256": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+      "matching_encodings": []
+    },
+    "dataset.py": {
+      "recorded_sha256": "3199fe9b4dd0b463c7b0ad35eb1e9758bd0f54b1947542a143e85206e12a276a",
+      "current_sha256": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936",
+      "matching_encodings": []
+    },
+    "train.py": {
+      "recorded_sha256": "4a49911c9f6b5bc3334bc5132ebdc3b4164c81ca25ccc50dacc65247f68644da",
+      "current_sha256": "5f71127981aa7e03195d3f93a91102a5cb8ea5b08b4e9e7a356b7aad83c464f7",
+      "matching_encodings": []
+    }
+  },
+  "dataset_regenerated_identically": false,
+  "dataset_regenerated_contents_identical": true,
+  "regenerated_dataset_sha256": "31304fe48519a699177f7e3d30e0d2189cf81af62516c4eb875bc481ee0cd3a8",
+  "official_artifacts_sha256": {
+    "model/weights/weights.txt": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4",
+    "model/data/geometry-v1.zip": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+    "model/training/history.csv": "048028d9b9c47b8130fbcc2b340f1314cb82512cafebb6e67ba7b0fbaf2d8876",
+    "model/training/reproducibility.json": "3931957e4ce191c61526995764982b9070773406e70ddb83b27eddce78566a98",
+    "model/training/training.json": "d8eb9dc233fac9c60d9cf62d6ad12d7bdbd1d3ad6a7765c9aea4b579f665818c",
+    "model/evaluation/metrics.json": "ccf99c5c73f380b87b8300a566623786313e6914e5597460875fc03ec430961a",
+    "model/evaluation/predictions.csv": "d78f420650860900cfff25a959b392b2d0bdc6410fce87302d989c8b61dca8e7"
+  },
+  "official_artifacts_unchanged": true,
+  "two_training_runs_identical_weights": true,
+  "two_training_runs_identical_history": true,
+  "matches_official_weights_bytes": false,
+  "max_weight_difference_from_official": 4.440892098500626e-16,
+  "max_test_probability_difference_from_official": 2.688821387764051e-17,
+  "official_test": {
+    "classes": [
+      "circulo",
+      "cruz",
+      "triangulo"
+    ],
+    "samples": 300,
+    "accuracy": 1.0,
+    "cross_entropy": 0.0002303936675979407,
+    "confusion_matrix_rows_true_columns_predicted": [
+      [
+        100,
+        0,
+        0
+      ],
+      [
+        0,
+        100,
+        0
+      ],
+      [
+        0,
+        0,
+        100
+      ]
+    ],
+    "per_class_recall": {
+      "circulo": 1.0,
+      "cruz": 1.0,
+      "triangulo": 1.0
+    }
+  },
+  "runs": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train",
+        "--weights",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase1-reproduction/run-1/weights.txt",
+        "--report-dir",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase1-reproduction/run-1",
+        "--epochs",
+        "60"
+      ],
+      "weights_sha256": "688f36bd68f140fbf387149d13b50d056ad2db8b11bc70b17be942da3d26be51",
+      "epochs_run": 60,
+      "best_epoch": 60,
+      "seed": 20261022,
+      "batch_size": 24,
+      "learning_rate": 0.003,
+      "initial_validation": {
+        "accuracy": 0.31666666666666665,
+        "cross_entropy": 1.091918424421761
+      },
+      "final_training": {
+        "accuracy": 1.0,
+        "cross_entropy": 0.0001089893962882659
+      },
+      "final_validation": {
+        "accuracy": 1.0,
+        "cross_entropy": 0.00010946370327824087
+      },
+      "parameter_change_l2": {
+        "FILTER1": 1.1280419472613665,
+        "FILTER2": 1.1930470699276794,
+        "W1": 3.9812003816735286,
+        "B1": 0.14653551764649933,
+        "W2": 1.4999272488009499,
+        "B2": 0.23433873058192714
+      },
+      "seconds": 46.32049409399997,
+      "test": {
+        "classes": [
+          "circulo",
+          "cruz",
+          "triangulo"
+        ],
+        "samples": 300,
+        "accuracy": 1.0,
+        "cross_entropy": 0.0002303936675979407,
+        "confusion_matrix_rows_true_columns_predicted": [
+          [
+            100,
+            0,
+            0
+          ],
+          [
+            0,
+            100,
+            0
+          ],
+          [
+            0,
+            0,
+            100
+          ]
+        ],
+        "per_class_recall": {
+          "circulo": 1.0,
+          "cruz": 1.0,
+          "triangulo": 1.0
+        }
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "cnn_python.train",
+        "--weights",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase1-reproduction/run-2/weights.txt",
+        "--report-dir",
+        "/home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/phase1-reproduction/run-2",
+        "--epochs",
+        "60"
+      ],
+      "weights_sha256": "688f36bd68f140fbf387149d13b50d056ad2db8b11bc70b17be942da3d26be51",
+      "epochs_run": 60,
+      "best_epoch": 60,
+      "seed": 20261022,
+      "batch_size": 24,
+      "learning_rate": 0.003,
+      "initial_validation": {
+        "accuracy": 0.31666666666666665,
+        "cross_entropy": 1.091918424421761
+      },
+      "final_training": {
+        "accuracy": 1.0,
+        "cross_entropy": 0.0001089893962882659
+      },
+      "final_validation": {
+        "accuracy": 1.0,
+        "cross_entropy": 0.00010946370327824087
+      },
+      "parameter_change_l2": {
+        "FILTER1": 1.1280419472613665,
+        "FILTER2": 1.1930470699276794,
+        "W1": 3.9812003816735286,
+        "B1": 0.14653551764649933,
+        "W2": 1.4999272488009499,
+        "B2": 0.23433873058192714
+      },
+      "seconds": 42.68706784599999,
+      "test": {
+        "classes": [
+          "circulo",
+          "cruz",
+          "triangulo"
+        ],
+        "samples": 300,
+        "accuracy": 1.0,
+        "cross_entropy": 0.0002303936675979407,
+        "confusion_matrix_rows_true_columns_predicted": [
+          [
+            100,
+            0,
+            0
+          ],
+          [
+            0,
+            100,
+            0
+          ],
+          [
+            0,
+            0,
+            100
+          ]
+        ],
+        "per_class_recall": {
+          "circulo": 1.0,
+          "cruz": 1.0,
+          "triangulo": 1.0
+        }
+      }
+    }
+  ],
+  "total_seconds": 93.2704873680002
+}
