@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAI Cubes — Cliente Web (PC3)</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>OpenAI Cubes · Cliente Web</h1>
+      <span class="subtitle">HTTP Socket Gateway → TCP Binario → CNN Distribuida</span>
+    </div>
+    <div id="status-badge" class="badge badge-warn">Verificando gateway...</div>
+  </header>
+
+  <main class="layout">
+    <!-- Panel izquierdo: Configuración y entrada de imagen -->
+    <section class="card controls-panel">
+      <h2>1. Configuración de Conexión</h2>
+      <div class="grid-2">
+        <label>
+          ID Cliente (BD2)
+          <input type="text" id="clientId" value="cliente-web-01" />
+        </label>
+        <label>
+          Modo Inferencia
+          <select id="mode">
+            <option value="SEQUENTIAL">SEQUENTIAL (Python)</option>
+            <option value="DISTRIBUTED">DISTRIBUTED (Workers)</option>
+          </select>
+        </label>
+        <label>
+          Host Backend Java
+          <input type="text" id="backendHost" value="127.0.0.1" />
+        </label>
+        <label>
+          Puerto Backend
+          <input type="number" id="backendPort" value="9000" min="1" max="65535" />
+        </label>
+      </div>
+
+      <h2>2. Entrada de Imagen (16×16)</h2>
+      <div class="input-actions">
+        <label class="file-btn">
+          📁 Subir PNG/JPG
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" hidden />
+        </label>
+        <button type="button" id="clearCanvasBtn" class="btn-secondary">🧹 Limpiar Lienzo</button>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="invertColors" />
+          Invertir intensidad (fondo claro)
+        </label>
+      </div>
+
+      <div class="canvas-row">
+        <div class="canvas-box">
+          <span>Lienzo de dibujo (160×160)</span>
+          <canvas id="drawCanvas" width="160" height="160"></canvas>
+        </div>
+        <div class="canvas-box">
+          <span>Tensor CNN (16×16)</span>
+          <canvas id="preview16" width="16" height="16"></canvas>
+          <small id="sizeInfo">0 bytes Base64</small>
+        </div>
+      </div>
+
+      <details class="b64-details">
+        <summary>Ver payload Base64 y vector normalizado</summary>
+        <textarea id="base64Output" rows="3" readonly></textarea>
+      </details>
+
+      <button type="button" id="sendBtn" class="btn-primary">🚀 Clasificar Imagen</button>
+    </section>
+
+    <!-- Panel derecho: Chat de solicitudes y resultados -->
+    <section class="card chat-panel">
+      <div class="chat-header">
+        <h2>3. Historial / Chat de Clasificación</h2>
+        <button type="button" id="clearChatBtn" class="btn-secondary btn-sm">Vaciar chat</button>
+      </div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="msg msg-system">
+          Dibuja una figura (círculo, cruz o triángulo) en el lienzo o sube una imagen y pulsa <strong>Clasificar Imagen</strong>.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
