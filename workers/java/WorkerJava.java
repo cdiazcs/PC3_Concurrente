@@ -11,6 +11,14 @@ import java.util.regex.Pattern;
 public class WorkerJava {
     private static final int MAX_LENGTH = 2_000_000;
     private static int computeThreads = 4;
+    private static Semaphore computeSlots;
+    private static int frameTimeoutMs;
+    private static final ScheduledThreadPoolExecutor writeDeadlines = new ScheduledThreadPoolExecutor(1, task -> {
+        Thread thread = new Thread(task, "worker-write-deadlines");
+        thread.setDaemon(true);
+        return thread;
+    });
+    static { writeDeadlines.setRemoveOnCancelPolicy(true); }
     private static final Pattern DECIMAL = Pattern.compile("[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?");
 
     public static void main(String[] args) throws Exception {
@@ -18,35 +26,65 @@ public class WorkerJava {
         int nThreads = args.length >= 2 ? Integer.parseInt(args[1]) : 4;
         if (nThreads < 1 || nThreads > 256) throw new IllegalArgumentException("invalid_threads");
         computeThreads = nThreads;
-        ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+        frameTimeoutMs = setting("PC3_WORKER_TIMEOUT_MS", 15000, 100, 300000);
+        int maxClients = setting("PC3_WORKER_MAX_CLIENTS", 64, 1, 1024);
+        computeSlots = new Semaphore(nThreads);
+        ExecutorService pool = new ThreadPoolExecutor(0, maxClients, 30, TimeUnit.SECONDS,
+                                                      new SynchronousQueue<Runnable>());
         try (ServerSocket server = new ServerSocket(port)) {
             System.out.println("WorkerJava escuchando en puerto " + port + " con " + nThreads + " hilos");
             while (true) {
                 Socket client = server.accept();
-                pool.execute(() -> handle(client));
+                try { pool.execute(() -> handle(client)); }
+                catch (RejectedExecutionException busy) { client.close(); }
             }
         } finally {
             pool.shutdown();
+            writeDeadlines.shutdownNow();
         }
+    }
+
+    private static int setting(String name, int fallback, int minimum, int maximum) {
+        String raw = System.getenv(name);
+        int value = raw == null ? fallback : Integer.parseInt(raw);
+        if (value < minimum || value > maximum) throw new IllegalArgumentException("invalid_worker_limits");
+        return value;
     }
 
     private static void handle(Socket socket) {
         try (Socket client = socket;
              DataInputStream in = new DataInputStream(new BufferedInputStream(client.getInputStream()));
              DataOutputStream out = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()))) {
-            client.setSoTimeout(15000);
+            client.setSoTimeout(frameTimeoutMs);
             while (true) {
                 String input;
-                try { input = readFrame(in); }
+                try { input = readFrame(in, client); }
                 catch (EOFException eof) { return; }
                 String answer;
-                try { answer = evaluate(input); }
+                try {
+                    String command = input.split("\\|", 2)[0];
+                    boolean limited = command.equals("JOB") || command.equals("CONV") || command.equals("MLP");
+                    if (limited && !computeSlots.tryAcquire(frameTimeoutMs, TimeUnit.MILLISECONDS)) {
+                        String[] fields = input.split("\\|", -1);
+                        String requestId = fields.length > 1 && validId(fields[1]) ? fields[1] : "unknown";
+                        String taskId = fields.length > 2 && validId(fields[2]) ? fields[2] : "unknown";
+                        answer = "ERROR|"+requestId+(command.equals("JOB") ? "|"+taskId : "")+"|worker_busy";
+                    } else {
+                        try { answer = evaluate(input); }
+                        finally { if (limited) computeSlots.release(); }
+                    }
+                }
+                catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); return; }
                 catch (Exception error) {
                     String[] parts = input.split("\\|", -1);
                     String id = parts.length > 1 ? parts[1] : "unknown";
                     answer = "ERROR|" + id + "|" + error.getClass().getSimpleName();
                 }
-                writeFrame(out, answer);
+                ScheduledFuture<?> guard = writeDeadlines.schedule(() -> {
+                    try { client.close(); } catch (IOException ignored) { }
+                }, frameTimeoutMs, TimeUnit.MILLISECONDS);
+                try { writeFrame(out, answer); }
+                finally { guard.cancel(false); }
             }
         } catch (IOException e) {
             System.err.println("conexion terminada: " + e.getMessage());
@@ -237,13 +275,26 @@ public class WorkerJava {
         }
         return sb.toString();
     }
-    private static String readFrame(DataInputStream in) throws IOException {
-        int length = in.readInt();
+    private static String readFrame(DataInputStream in, Socket client) throws IOException {
+        long end = System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(frameTimeoutMs);
+        int length = ByteBuffer.wrap(readExact(in, client, 4, end)).getInt();
         if (length <= 0 || length > MAX_LENGTH) throw new IOException("invalid_length");
-        byte[] buf = new byte[length];
-        in.readFully(buf);
+        byte[] buf = readExact(in, client, length, end);
         return StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
             .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(buf)).toString();
+    }
+    private static byte[] readExact(DataInputStream in, Socket client, int count, long end) throws IOException {
+        byte[] data = new byte[count];
+        int offset = 0;
+        while (offset < count) {
+            long remaining = end-System.nanoTime();
+            if (remaining <= 0) throw new SocketTimeoutException("frame_timeout");
+            client.setSoTimeout((int)Math.max(1, TimeUnit.NANOSECONDS.toMillis(remaining)));
+            int read = in.read(data, offset, count-offset);
+            if (read < 0) throw new EOFException("truncated_frame");
+            offset += read;
+        }
+        return data;
     }
     private static void writeFrame(DataOutputStream out, String message) throws IOException {
         byte[] body = message.getBytes(StandardCharsets.UTF_8);

@@ -1,0 +1,52 @@
+{
+  "scope": "baseline_localhost_before_worker_changes",
+  "observations": [
+    {
+      "language": "Java",
+      "connections": 80,
+      "rejected_within_1s": 0,
+      "closed_drip_by_16_5s": false,
+      "elapsed_s": 16.516047416999754
+    },
+    {
+      "language": "Python",
+      "connections": 80,
+      "rejected_within_1s": 0,
+      "closed_drip_by_16_5s": true,
+      "elapsed_s": 15.000372444000277
+    },
+    {
+      "language": "CSharp",
+      "connections": 80,
+      "rejected_within_1s": 0,
+      "closed_drip_by_16_5s": false,
+      "elapsed_s": 16.51691690100006
+    }
+  ],
+  "source_sha256_before": {
+    "workers/python/worker.py": "87745a6cbd2f5db783c99fa1cf38540ba88794be63cff07c5e5906b18ec0e11d",
+    "workers/java/WorkerJava.java": "85215f05ffd68d4897882dffbf93606974041930481839febf99f84b654b20b4",
+    "workers/csharp/Worker.cs": "aed97d2573b3121e7e82fe80c321e217780acf8b76779f56ed488a802c1f5267",
+    "tests/test_worker_limits.py": "449996eabf222b44895f7ab37c1ab2f25b9ab1f05491c0c44cd9dd36355e53f6"
+  },
+  "distributed_baseline": {
+    "tests_run": 15,
+    "failures": 0,
+    "errors": 0,
+    "seconds_unittest": 20.244,
+    "correct_sequential": 300,
+    "correct_distributed": 300,
+    "max_probability_difference": 4.994893387788579e-13,
+    "max_tensor_difference": 2.6645352591003757e-15
+  },
+  "initial_full_suite": {
+    "tests_run": 99,
+    "passed": 98,
+    "failures": 0,
+    "errors": 1,
+    "skipped": 0,
+    "seconds": 109.79,
+    "error": "RuntimeError: not_enough_physical_cores; requires 6 physical cores; available 4"
+  },
+  "note": "WorkerLimitTests initial queue fixture used queue=1 for two chunks. Corrected to 2 without modifying coordinator. Initial new environment settings were unsupported by old workers."
+}

@@ -6,26 +6,43 @@ import json
 from pathlib import Path
 
 from .dataset import DEFAULT_DATASET, ROOT, load_split, read_manifest
-from .model import CLASSES, CNN, DEFAULT_WEIGHTS
+from .model import CLASSES, CNN, DEFAULT_WEIGHTS, SHAPES, cross_entropy
 
 
 def evaluate(model, examples):
     confusion = [[0]*3 for _ in range(3)]
     predictions = []
+    total_loss = 0.0
     for index, (pixels, expected) in enumerate(examples):
-        prediction = model.predict(pixels)
-        confusion[expected][prediction.index] += 1
+        state = model.trace(pixels)
+        total_loss += cross_entropy(state['logits'], expected)
+        probabilities = state['probabilities']
+        predicted = max(range(len(CLASSES)), key=probabilities.__getitem__)
+        confusion[expected][predicted] += 1
         predictions.append({'sample': index, 'expected': CLASSES[expected],
-                            'predicted': prediction.label,
-                            **dict(zip(CLASSES, prediction.probabilities))})
+                            'predicted': CLASSES[predicted],
+                            **dict(zip(CLASSES, probabilities))})
     total = len(examples)
     if not total:
         raise ValueError('empty_evaluation')
+    per_class = {CLASSES[i]: confusion[i][i]/sum(confusion[i])
+                 if sum(confusion[i]) else None for i in range(3)}
     return {'classes': CLASSES, 'samples': total,
             'accuracy': sum(confusion[i][i] for i in range(3))/total,
+            'cross_entropy': total_loss/total,
             'confusion_matrix_rows_true_columns_predicted': confusion,
-            'per_class_recall': {CLASSES[i]: confusion[i][i]/sum(confusion[i])
-                                 if sum(confusion[i]) else None for i in range(3)}}, predictions
+            'per_class_recall': per_class,
+            'per_class_accuracy': dict(per_class),
+            'per_class_accuracy_definition': 'correct / true samples of that class (recall)',
+            'model_configuration': {
+                'input_shape': [16, 16, 1],
+                'convolution': {'filters': 2, 'kernel': [3, 3], 'stride': 1,
+                                'padding': 'valid', 'bias': False, 'activation': 'relu'},
+                'pooling': {'type': 'max', 'size': [2, 2], 'stride': 2},
+                'flatten': 98, 'dense_units': [8, 3],
+                'dense_activations': ['relu', 'softmax'],
+                'parameter_sections': dict(SHAPES),
+                'trainable_parameters': sum(SHAPES.values())}}, predictions
 
 
 def main():

@@ -1,5 +1,6 @@
 """Worker Python 3 con solo stdlib. Micro chunks CONV y MLP. Pipeline CNN completo."""
 import math
+import os
 import re
 import socket
 import struct
@@ -301,12 +302,25 @@ def handle(conn, address):
             print(f'conexion {address} terminada: {ex}', file=sys.stderr)
 
 
+def connection_handler(conn, address, slots):
+    try:
+        handle(conn, address)
+    finally:
+        slots.release()
+
+
 def main():
-    global COMPUTE_THREADS, COMPUTE_SLOTS
+    global COMPUTE_THREADS, COMPUTE_SLOTS, FRAME_TIMEOUT_SECONDS
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 9102
     COMPUTE_THREADS = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     if not 1 <= COMPUTE_THREADS <= 256:
         raise ValueError('invalid_threads')
+    max_clients = int(os.environ.get('PC3_WORKER_MAX_CLIENTS', '64'))
+    timeout_ms = int(os.environ.get('PC3_WORKER_TIMEOUT_MS', '15000'))
+    if not 1 <= max_clients <= 1024 or not 100 <= timeout_ms <= 300000:
+        raise ValueError('invalid_worker_limits')
+    FRAME_TIMEOUT_SECONDS = timeout_ms/1000
+    connections = threading.BoundedSemaphore(max_clients)
     COMPUTE_SLOTS = threading.BoundedSemaphore(COMPUTE_THREADS)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -316,7 +330,15 @@ def main():
     with server:
         while True:
             conn, addr = server.accept()
-            threading.Thread(target=handle, args=(conn, addr), daemon=True).start()
+            if not connections.acquire(blocking=False):
+                conn.close()
+                continue
+            try:
+                threading.Thread(target=connection_handler, args=(conn, addr, connections), daemon=True).start()
+            except Exception:
+                conn.close()
+                connections.release()
+                raise
 
 
 if __name__ == '__main__':

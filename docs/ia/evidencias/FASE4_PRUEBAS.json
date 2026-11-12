@@ -1,0 +1,680 @@
+{
+  "schema_version": 1,
+  "scope": "localhost_integration_not_physical_distribution",
+  "timestamp_utc": "2026-11-12T08:52:19.965036+00:00",
+  "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.43",
+  "versions": {
+    "python": "Python 3.14.4",
+    "java": "Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true\nopenjdk version \"21.0.13.0.3\" 2026-10-24\nOpenJDK Runtime Environment (build 21.0.13.0.3+1-1-26.04.1-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.13.0.3+1-1-26.04.1-Ubuntu, mixed mode, sharing)",
+    "javac": "javac 21.0.13.0.3\nPicked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true",
+    "dotnet": ".NET SDK:\n Version:           8.0.428\n Commit:            742a7a66c3\n Workload version:  8.0.400-manifests.a830daf1\n MSBuild version:   17.11.71+2613e0705\n\nRuntime Environment:\n OS Name:     ubuntu\n OS Version:  26.04\n OS Platform: Linux\n RID:         linux-x64\n Base Path:   /tmp/pc3-dotnet8/sdk/8.0.428/\n\n.NET workloads installed:\nConfigured to use loose manifests when installing new manifests.\nThere are no installed workloads to display.\n\nHost:\n  Version:      8.0.34\n  Architecture: x64\n  Commit:       b455eab3a0\n\n.NET SDKs installed:\n  8.0.428 [/tmp/pc3-dotnet8/sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 8.0.34 [/tmp/pc3-dotnet8/shared/Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 8.0.34 [/tmp/pc3-dotnet8/shared/Microsoft.NETCore.App]\n\nOther architectures found:\n  None\n\nEnvironment variables:\n  Not set\n\nglobal.json file:\n  Not found\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "scripts/validate_phase2.py",
+    "--dotnet-dir",
+    "/tmp/pc3-dotnet8",
+    "--output",
+    "build/phase4-final"
+  ],
+  "tests_run": 142,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 1,
+  "successful": true,
+  "seconds": 122.97410908599977,
+  "source_sha256": {
+    "cnn_python/model.py": "0c7dccac234ed06046f096eae36935f6997f6e03bc686edc31b439af568b2f9c",
+    "cnn_python/training_backends.py": "35250550f8efab5576019910e7dcb4525c930a38dc27fc57e262a0353d5d65d7",
+    "cnn_python/train.py": "7a3a5dea1091170414a4505c49f667fc42dc289493d6cf7f7ce5017f6b4bffb3",
+    "cnn_python/training_amqp.py": "06a602c4201b28b8f01d3e0ba822591ad01a1d382801d764d8ff13898db4b223",
+    "cnn_python/__init__.py": "a292d918c2181f188e1ca38cad3c6a344981985993645e923da578ea02a09d3e",
+    "cnn_python/images.py": "a4b73d427d084d14fec5009509dc93ad52f6f6be9d2d66e29f1cfa751f739f41",
+    "cnn_python/model_state.py": "12f70d1faa99c63b40d3869c06f6c296fb9d59a59f3ae0de816b6c3e937fe4dd",
+    "cnn_python/gradient_protocol.py": "dcbc0185bcbe262b7bb7ae93ed1c0dc124ee6e57211972fcb22e785260f5c39c",
+    "cnn_python/train_synchronous.py": "8657115b26e0b54982b1defc3dff0c704553c0fe8212e864fc5171755a9df68d",
+    "cnn_python/predict.py": "b50bfda85270269b1f0ef3c8a5b6355027f6063a094538aad1be6f19b9f0b5ce",
+    "cnn_python/evaluate.py": "afca2de8084a941c3a201b8103b0a53001d316e9cd5d1512297fd47e06f69c6f",
+    "cnn_python/training_math.py": "15dba277c5d17eae2ab68a345bd10e5536e8529e6808407f82d2fcf0a528ca71",
+    "cnn_python/dataset.py": "ceeeae93f6279705870a124797cecc71d8ca88796927f72dedbbdf37891ce936",
+    "workers/csharp/Worker.cs": "492b1e1e159c6ac1907b0ed86f9b582da16c54d82c1d6fca31694dab52954fff",
+    "workers/csharp/Worker.csproj": "031da6a6f6d810b9f23ffe7818f3acefb7b0ff54b0eb8c6752735ad58d254904",
+    "workers/python/rabbit_config.py": "6e0aa34ceefbad685fb4264c46eace807c6167bf31a6a9dc66735a242fb6c4e4",
+    "workers/python/worker.py": "9618c837f2f390003204045e6c52b380262c94208b01c311c2191e1acc87caa9",
+    "workers/python/training_worker.py": "36617bde15dab7d0463c6d37859bd318d83dec23e54cf6d158768a21d4bb93c7",
+    "workers/python/ia_service.py": "d27944f6a0f87ae80d49ab4cea1be8345b87bad2f59b0f5c5187f97834641a30",
+    "workers/python/rabbit_worker.py": "cd657d4cf17d42eb03c4b35c42958e4f081306e8ae147286bbb0a0067140d9ce",
+    "workers/python/rabbit_messages.py": "af09616c6ee9c7792ae7c5f781b0ac1fe14d3691277e0da5eeaea5dab4c8126c",
+    "workers/java/WorkerJava.java": "6dfa710e7050ddffbe01e3529925f39e85812ca897c601f82ac792d8a5155ae1",
+    "server-java/DistributedCnn.java": "fad120c7576bf823134659e2f916a01423b5eed4cb60aa36fc280f565da40e43",
+    "server-java/CentralServer.java": "c5fc188d857adaa083febd78b3a2a5f22b14760eedab21abff3f97ad2b5281ec",
+    "clients-java/ClientCli.java": "c30e7b5a1a4b5bba4a20aef338c2273c4077dafae0faa0691f1f8e116477c6d9",
+    "frontend-java/ImageClient.java": "0c808096fe045d8d1447b453e338a04859a0ca95c9c7988d0573c249f5f68be0",
+    "frontend-java/ImagePanel.java": "463d51c38e1c0a16b8cf9f8fa6448869569c8cae5b4f4d1032453a90a4d37a02",
+    "frontend-java/OpenAICubesGUI.java": "3a623506d874ca0ecc7ca2f21a352da01713960082c4a4d7d2369d2fe0319a90",
+    "frontend-java/SwingUi.java": "000e74c9f7496df2d75f703baa4e10a643ff307350debb66141e92f30992ef56",
+    "frontend-java/OpenAICubesPanel.java": "bfe2312c64678a747cf4b5027e36526816f0cf0da7c8ed7a830118279240f302",
+    "frontend-java/ChatPanel.java": "159b9ec2589960f25183cd91f598783e8ad2e74df739f4cdb0f2fb84330f9f5a",
+    "benchmarks/CnnBenchmark.java": "23ea93c10d231422c22714a8b409ec36fd3c20bcdc7acaec025bf5808dfb8884",
+    "benchmarks/LocalCnn.java": "ce383620f009477889f7a3f01a89fefaec974d49fb012cd564b3eb6ecf499711",
+    "benchmarks/GraficasBenchmark.py": "c88f7c271b9a146e01bd821166febe629d279786813476e59465f96675955013",
+    "benchmarks/Benchmark.java": "96f1e201f240152dace068fd388c584ca251e177eed5b7ed11fefcde0feb1718",
+    "benchmarks/resource_probe.py": "13ea7f2da9ec10571513e2d64b24ed9f00a84e0876d91bcf12b95bb89451e262",
+    "benchmarks/prepare_inputs.py": "2619f679b0abeff940b881effbd65d19b113e94830ec0eda61d6643f113216eb",
+    "benchmarks/node_agent.py": "336ccb3e0efbd9605eade0aea7a9181ba903ab759395c463027836010c67eeca",
+    "benchmarks/PhysicalConfig.java": "4dfc1d73e681fffa7a8c040a62b9f5994162f2406c2d771e7ef1ef25a7c956a9",
+    "tests/FrontendChecks.java": "92d52420bde31ed6822943b0ff40b2802765afe855570694de2af05855b87aa9",
+    "tests/test_rabbit_worker.py": "f946397a22301884062fceb7d98866aec5c24198a3f11ba74b613f9c01f1bd9d",
+    "tests/test_identify.py": "03d1a339872f7791a92ca0dc61d61cea607ccb60a4add36d09541d967679eddf",
+    "tests/test_frontend.py": "0b94db048bd4328b59956631a46185c245f57b08f9e69d95c2910d32c56b7dd1",
+    "tests/BenchmarkChecks.java": "480a72586d819075597fec4f39f555066c32cddf8939f7b663fd63809d7b69cc",
+    "tests/test_benchmark.py": "13e40a9877866ca2114e46d81a0968f41b6d1dc49135a219e71955b4772e5b0e",
+    "tests/test_cnn_phase1.py": "32bb06393bbcc023450698f14abfa4832f35d5f311fa6659978a390c733fc967",
+    "tests/test_cnn.py": "fd3d67d790e9670ff787c36efe5b947870772d10052e574153c0edbd66083422",
+    "tests/test_parallel_training.py": "1f4041a61e50f75c1cd1ba2c15793846ae61f157d687740f313864f1bcc878bb",
+    "tests/test_worker_limits.py": "1c754237170128d19f1646e3c8f2f649526049679e732d2835fc704aea3d6b05",
+    "tests/smoke_test.py": "9345b89e2215032486942964fba05cf29095cc8c08f61f6f2f38b2690bb719a5",
+    "tests/test_local.py": "0cddb6683b982975586d94a31b43b6bfef08d8110242e7a4d4c39241df1f692d",
+    "tests/test_rabbit_messages.py": "72f4c9b44a064ce3e6212d83fd4fa1a500f0df0e78ed20420f8b61c3fd400ce0",
+    "tests/test_distributed.py": "df6b9f2defefe376c4a3724fd48ca04080a23fd2c667766fa3622f9ce6e4d237",
+    "tests/test_protocol.py": "d943eced0e77c27e7061a2bac67a9d9c961ea9c1f52899791f3de16fee71c67e",
+    "tests/test_distributed_training.py": "56f0aeeffebfed9f5d64e0aa76423588d25b0b17be063c0cbb7ce4d7b2f32099",
+    "tests/test_gradient_aggregation.py": "86850a96d11227ce693a1f6287c8d6359d278dd3ed07e93f0daa6e881ddda78c",
+    "tests/test_rabbit_distributed.py": "1863a922c0913b98285467187d32486e2e25f5000397b9692c878445d0039556",
+    "tests/test_training_recovery.py": "0c2823315d35467eca0cfa24527ff27db6aa947189868fb52ebd8652c5809b6f",
+    "tests/test_rabbit_integration.py": "3bf1dfcee6502005706db40ef0c7ddcc575ef108e81e243c9760104d19ddf037",
+    "scripts/validate_phase2.py": "88794411c1bd48d9d0e6535117510d3ece19ec6074dc667a47bf227c55364c1c"
+  },
+  "sources_unchanged": true,
+  "official_model_artifacts_sha256": {
+    "model/evaluation/predictions.csv": "d78f420650860900cfff25a959b392b2d0bdc6410fce87302d989c8b61dca8e7",
+    "model/evaluation/metrics.json": "ccf99c5c73f380b87b8300a566623786313e6914e5597460875fc03ec430961a",
+    "model/examples/triangulo-1.png": "e77815ff99d91542fcc99f502d40880b938af743f5cef996dff28339719ceeb8",
+    "model/examples/cruz-1.png": "a486a16faca11797ed6f2c8587140dcbbf3909af83f1026317bf50b72bc4959e",
+    "model/examples/circulo-2.png": "6d8710daefc155dd813818cdd1e390240d73c14f87848c221af0436443efc926",
+    "model/examples/triangulo-0.png": "552a0507c08cafb8d9b4f9927a2ea825be72b4aecf77dba003c7f5719e0163f3",
+    "model/examples/triangulo-2.png": "1512f3129fc4d515976a976453803459f302ff7f2a58cfd3a49fe5cac8f44422",
+    "model/examples/cruz-0.png": "5028860899118728cb8dfadb048270416f74601e9ec7657c5ae3091f98985e66",
+    "model/examples/circulo-0.png": "9ed827285ae1e9922b63d8351086c1680abd5af23052859ecb8f56c035afdd73",
+    "model/examples/cruz-2.png": "86fd8844d7da73cfa6b1f4bcd68c0c843dd5e111f9fc358f6148d1f2470cd4dd",
+    "model/examples/circulo-1.png": "e6590408d323bb73ea136948fbb6b61af9314c6577bf6ec4c04145bdc85f9173",
+    "model/data/geometry-v1.zip": "b9130514dca3a0b0bb3ae34cf23a59d1c5f455576ad41fce73118b6112143d81",
+    "model/training/reproducibility.json": "3931957e4ce191c61526995764982b9070773406e70ddb83b27eddce78566a98",
+    "model/training/training.json": "d8eb9dc233fac9c60d9cf62d6ad12d7bdbd1d3ad6a7765c9aea4b579f665818c",
+    "model/training/history.csv": "048028d9b9c47b8130fbcc2b340f1314cb82512cafebb6e67ba7b0fbaf2d8876",
+    "model/weights/weights.txt": "df582438e8fa66b5f606408d646b8df3025f3e9b033dd780b17e45df0c550ec4"
+  },
+  "official_model_artifacts_unchanged": true,
+  "log_sha256": "714ce95cc24dbdf1af8bbb4913fcadeea4ee38a05d0228012bcb7abcb3df6439",
+  "results": [
+    {
+      "test": "test_benchmark.BenchmarkTests.test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines",
+      "status": "passed"
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_error_causes_ids_deadline_and_failed_requests_not_successes",
+      "status": "passed"
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_invalid_local_resource_configurations_are_rejected",
+      "status": "passed"
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_local_benchmark_concurrent_clients_metrics_reproducibility_and_graphs",
+      "status": "passed"
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_local_cnn_300_images_match_independent_python_and_parallel",
+      "status": "passed"
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_parallel_distributed_profile_with_six_physical_cores",
+      "status": "skipped",
+      "reason": "PARALLEL_DISTRIBUTED: emulacion requiere 6 nucleos fisicos disjuntos; disponibles 4. No acredita maquinas distintas."
+    },
+    {
+      "test": "test_benchmark.BenchmarkTests.test_post_operations_all_three_languages",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.AcceptanceTests.test_independent_accuracy_and_persisted_confusion_matrix",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.AcceptanceTests.test_inference_does_not_open_sockets",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.AcceptanceTests.test_inference_weights_from_another_directory",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.AcceptanceTests.test_pixels_determine_prediction_and_filename_does_not",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.DatasetTests.test_dataset_generation_reproducible",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.DatasetTests.test_independent_balanced_splits",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.ImageTests.test_invalid_images",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.ImageTests.test_normalization_and_resize",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.ImageTests.test_pgm_text_binary_and_comments",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.ImageTests.test_png_filters_and_rgb",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.ImageTests.test_png_round_trip_and_content_based_format",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_convolution_known_values",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_flatten_channel_and_row_order",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_full_pipeline_dimensions_and_shared_convolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_gradients_all_837_parameters",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_invalid_inputs",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_max_pooling_and_tie_order",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_mlp_reference",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_relu",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_softmax_stability",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_tiny_training_reproducible_and_all_layers_change",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.MathTests.test_weight_round_trip_and_immutable_model",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.WorkerIntegrationTests.test_atomic_cold_load_matches_local_inference",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn.WorkerIntegrationTests.test_worker_from_other_directory_and_identify_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_adam_two_updates_bias_correction_and_gradient_clipping",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_evaluation_confusion_errors_absent_classes_and_configuration",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_evaluation_loss_matches_reference_and_handles_zero_probabilities",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_gradients_all_parameters_more_seeds_and_labels",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_loss_large_common_offset_and_underflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_pool_tie_backward_uses_first_winner",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_relu_zero_and_negative_block_backprop",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.NumericalTests.test_training_decreases_loss_with_partial_batch_and_selects_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_cnn_phase1.PreprocessingParityTests.test_java_python_pixels_png_pgm_and_resize",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_300_images_both_modes_probabilities_and_classes",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_all_partials_invalid_produce_error_and_legacy_nodes_are_skipped",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_capabilities_and_raw_jobs_all_languages",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_configurable_threads_chunks_and_missing_model",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_convolution_split_and_dense_split_between_two_workers",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_intermediate_tensors_and_real_three_language_trace",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_invalid_inputs_and_mode_preserve_stable_errors",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_invalid_partial_result_retried_and_never_accepted",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_java_cli_both_modes_three_classes",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_job_validation_consistent_and_connection_reusable",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_multiple_clients_reusing_external_ids_are_isolated",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_one_node_cannot_silently_fall_back_to_whole_identify",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_out_of_order_concurrent_chunks_and_layer_barriers",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_timeout_is_bounded_and_next_request_recovers",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed.DistributedTests.test_worker_dies_during_inference_and_rejoins",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_a_real_gradients_and_training_same_as_sequential",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_b_duplicate_stale_and_failed_tasks_never_double_apply",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_c_timeout_missing_workers_and_bad_dataset_checkpoint",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_d_parallel_local_inside_amqp_workers",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_e_malformed_task_error_and_worker_survives",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_training.DistributedTrainingTests.test_f_worker_disconnect_requeues_assigned_tasks",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_connection_refused_and_gui_can_retry",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_gui_timeout_and_cancellation_close_resources",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_image_client_both_modes_real_server_three_classes",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_protocol_bad_replies_fragmentation_and_absolute_deadline",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_shared_preprocessing_every_pixel_png_pgm_alpha_and_resize",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_swing_concurrent_out_of_order_real_inference_and_edt",
+      "status": "passed"
+    },
+    {
+      "test": "test_frontend.FrontendTests.test_unit_components_ids_messages_jpeg_and_invalid_formats",
+      "status": "passed"
+    },
+    {
+      "test": "test_gradient_aggregation.GradientTests.test_duplicates_and_concurrent_commit_are_idempotent",
+      "status": "passed"
+    },
+    {
+      "test": "test_gradient_aggregation.GradientTests.test_fundamental_unequal_partitions_gradients_and_one_update",
+      "status": "passed"
+    },
+    {
+      "test": "test_gradient_aggregation.GradientTests.test_invalid_stale_incomplete_conflicting_and_nonfinite",
+      "status": "passed"
+    },
+    {
+      "test": "test_gradient_aggregation.GradientTests.test_task_validation_dataset_weights_indices_and_version",
+      "status": "passed"
+    },
+    {
+      "test": "test_gradient_aggregation.GradientTests.test_weighted_known_values_not_average_of_means",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_300_independent_images_match_local",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_concurrent_unique_and_repeated_ids",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_fallback_after_corrupt_or_truncated_response",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_invalid_input_and_persistent_connection",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_invalid_utf8_and_truncation_do_not_stop_services",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_java_cli_three_classes",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_java_client_rejects_bad_images_and_ids",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_java_client_rejects_invalid_server_replies",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_java_preprocessing_matches_every_pixel",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_mixed_fragmented_and_coalesced_messages",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_more_than_sixteen_persistent_clients",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_never_sent_to_java_or_csharp",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_python_frame_has_total_deadline",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_rejects_corrupt_worker_responses",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_timeout_and_slow_frame_are_bounded",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_without_python_worker",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_worker_disconnect_and_restart",
+      "status": "passed"
+    },
+    {
+      "test": "test_identify.IdentifyTests.test_identify_worker_error_propagated",
+      "status": "passed"
+    },
+    {
+      "test": "test_parallel_training.ParallelTests.test_real_process_gradients_and_training_match_sequential",
+      "status": "passed"
+    },
+    {
+      "test": "test_parallel_training.ParallelTests.test_worker_exception_does_not_update_model",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.LocalClientTests.test_invalid_identify_responses",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.LocalClientTests.test_partial_receives",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_benchmark_transport",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_concurrent_clients",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_documented_operations",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_existing_smoke_and_cli",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_fragmented_and_coalesced_frames",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_invalid_and_truncated_frames",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_invalid_messages_and_connection_reuse",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_language_configurations",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_local_reports_connection_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_nonfinite_computation_rejected",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_numeric_reference",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_ping_languages_and_round_robin",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_python_identify_transport_only",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_relu_and_stable_softmax",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_worker_failover_and_unavailability",
+      "status": "passed"
+    },
+    {
+      "test": "test_protocol.ProtocolTests.test_z_no_unhandled_python_exceptions",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_distributed.RabbitDistributedTests.test_amqp_reuses_coordinator_and_all_languages",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_a_real_profiles_correlated_equivalent_and_persistent",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_b_duplicates_conflicts_and_invalid_dlq",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_c_retry_exhaustion_real_ttl_queue",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_d_control_and_logs_real_queues",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_d_multiple_requests_and_consumer_count",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_e_process_restart_durable_input",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_f_real_connection_interruption_and_reconnect",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_integration.RabbitIntegrationTests.test_g_real_broker_application_restart",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_cache_failure_is_retryable_and_capacity_is_bounded",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_config_limits_and_secret_repr",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_duplicate_coalescing_conflicts_and_ttl",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_invalid_requests",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_local_concurrency_immutable_weights_and_same_prediction",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_parser_and_sizes",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_messages.MessageTests.test_valid_profiles_same_pixels_result_shapes_and_correlation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_bad_json_no_result_without_id",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_duplicate_reuses_inference_but_republishes_correlated_result",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_error_queue_publish_failure_never_ack",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_permanent_error_result_and_error_queue_before_ack",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_publish_confirmed_channel_then_ack",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_publish_failure_never_ack",
+      "status": "passed"
+    },
+    {
+      "test": "test_rabbit_worker.WorkerTests.test_retry_and_exhaustion",
+      "status": "passed"
+    },
+    {
+      "test": "test_training_recovery.RecoveryTests.test_atomic_checkpoint_resumes_mid_epoch_without_repeated_adam",
+      "status": "passed"
+    },
+    {
+      "test": "test_training_recovery.RecoveryTests.test_corrupt_checkpoint_rejected",
+      "status": "passed"
+    },
+    {
+      "test": "test_training_recovery.RecoveryTests.test_only_one_coordinator_lease_for_output",
+      "status": "passed"
+    },
+    {
+      "test": "test_worker_limits.WorkerLimitTests.test_connection_limit_rejects_excess_and_recovers",
+      "status": "passed"
+    },
+    {
+      "test": "test_worker_limits.WorkerLimitTests.test_coordinator_queue_saturation_is_bounded_and_recovers",
+      "status": "passed"
+    },
+    {
+      "test": "test_worker_limits.WorkerLimitTests.test_frame_deadline_covers_header_and_body_despite_drips",
+      "status": "passed"
+    },
+    {
+      "test": "test_worker_limits.WorkerLimitTests.test_idle_connection_does_not_occupy_compute_slot",
+      "status": "passed"
+    },
+    {
+      "test": "test_worker_limits.WorkerLimitTests.test_large_valid_frame_matches_all_workers",
+      "status": "passed"
+    }
+  ]
+}

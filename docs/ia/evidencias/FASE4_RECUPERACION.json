@@ -1,0 +1,8 @@
+{
+  "pausedVersion": 3,
+  "resumedVersion": 90,
+  "stepsOnResume": 87,
+  "weightsIdenticalByteForByte": true,
+  "checkpointIntegrityValidated": true,
+  "legacyTrainerMaxWeightDelta": 0.0
+}

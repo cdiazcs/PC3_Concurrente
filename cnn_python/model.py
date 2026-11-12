@@ -114,6 +114,18 @@ def softmax(logits):
     return [value/total for value in exps]
 
 
+def cross_entropy(logits, label):
+    """Loss desde logits: evita log(0) y cancelacion por un offset grande."""
+    logits = tuple(float(value) for value in logits)
+    if not logits or not all(math.isfinite(value) for value in logits):
+        raise ValueError('invalid_logits')
+    if type(label) is not int or not 0 <= label < len(logits):
+        raise ValueError('class_index')
+    maximum = max(logits)
+    return finite((maximum-logits[label])
+                  + math.log(sum(math.exp(value-maximum) for value in logits)))
+
+
 def _dense(x, w1, b1, w2, b2):
     ni, nh, no = len(x), len(b1), len(b2)
     prehidden = [finite(sum(w1[i*ni+j]*x[j] for j in range(ni)) + b1[i]) for i in range(nh)]
@@ -188,8 +200,7 @@ def loss_and_gradients(weights, image, label):
         raise ValueError('class_index')
     state = _forward(image, weights)
     logits = state['logits']
-    maximum = max(logits)
-    loss = finite(maximum + math.log(sum(math.exp(x-maximum) for x in logits)) - logits[label])
+    loss = cross_entropy(logits, label)
     dz = state['probabilities'][:]
     dz[label] -= 1
     gradients = {key: [0.0]*count for key, count in SHAPES.items()}
