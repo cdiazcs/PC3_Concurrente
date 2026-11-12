@@ -7,8 +7,8 @@ public final class OpenAICubesGUI {
     public static void main(String[] args) {
         try {
             if (args.length > 2) throw new IllegalArgumentException("Uso: OpenAICubesGUI [host puerto]");
-            String host = args.length > 0 ? args[0] : "127.0.0.1";
-            int port = args.length > 1 ? Integer.parseInt(args[1]) : 9000;
+            String host = args.length > 0 ? args[0] : System.getenv().getOrDefault("BACKEND_HOST", "127.0.0.1");
+            int port = args.length > 1 ? Integer.parseInt(args[1]) : Integer.parseInt(System.getenv().getOrDefault("BACKEND_PORT", "9000"));
             new ImageClient(host, port, 15000).close(); // Validacion local; no abre sockets.
             if (GraphicsEnvironment.isHeadless()) throw new IllegalStateException("No hay una pantalla gráfica disponible.");
             // UUID puede inicializar la entropia lentamente en Windows: nunca hacerlo en el EDT.

@@ -1,0 +1,20 @@
+{
+  "idSolicitud": "client-web",
+  "idCliente": "cliente-web-01",
+  "estado": "COMPLETADA",
+  "etiqueta": "circulo",
+  "probabilidades": [
+    0.9999982471200074,
+    9.965471289921848e-09,
+    1.7429145213097573e-06
+  ],
+  "sha256": "9ed827285ae1e9922b63d8351086c1680abd5af23052859ecb8f56c035afdd73",
+  "historial": 1,
+  "outbox": 1,
+  "validacionMariaDB": {
+    "id_solicitud": "client-web",
+    "id_cliente": "cliente-web-01",
+    "aprobado": 1,
+    "motivo": "CLIENTE_ACTIVO_AUTORIZADO"
+  }
+}

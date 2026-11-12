@@ -22,14 +22,14 @@ static class Worker
     private static readonly Regex Decimal = new Regex(@"\A[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?\z", RegexOptions.CultureInvariant);
     static async Task Main(string[] args)
     {
-        int port = args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 9103;
+        int port = args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : Setting("WORKER_CSHARP_PORT", 9103, 1, 65535);
         ComputeThreads = args.Length > 1 ? int.Parse(args[1], CultureInfo.InvariantCulture) : 4;
         if (ComputeThreads < 1 || ComputeThreads > 256) throw new ArgumentException("invalid_threads");
         ComputeSlots.Dispose();
         ComputeSlots = new SemaphoreSlim(ComputeThreads, ComputeThreads);
         FrameTimeoutMs = Setting("PC3_WORKER_TIMEOUT_MS", 15000, 100, 300000);
         using var connections = new SemaphoreSlim(Setting("PC3_WORKER_MAX_CLIENTS", 64, 1, 1024));
-        var listener = new TcpListener(IPAddress.Any, port);
+        var listener = new TcpListener(IPAddress.Parse(Environment.GetEnvironmentVariable("WORKER_CSHARP_HOST") ?? "127.0.0.1"), port);
         listener.Start();
         Console.WriteLine($"WorkerCSharp escuchando en {port}, compute_threads={ComputeThreads}");
         while (true)

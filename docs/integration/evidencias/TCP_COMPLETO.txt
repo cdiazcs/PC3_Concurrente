@@ -1,0 +1,196 @@
+Perfil integrante: all
+OK: Java (release 17)
+OK: sintaxis Python
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Worker -> /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/workers/csharp/bin/Debug/net8.0/Worker.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.20
+OK: C# compilado
+OK: estructura de integration y fuentes existentes
+OK: ejemplos de contratos JSON parseables; ver test_cross_language para compatibilidad ejecutada
+OK: inferencia local CNN = circulo
+OK: compilacion de fuentes Java
+Disponibilidad: dotnet instalado, probar dotnet build en CI/equipo
+ALCANCE: preflight sin servicios; RabbitMQ y TCP se verifican por separado
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112347-a94c0c
+test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines (test_benchmark.BenchmarkTests.test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines) ... ETAPA6: DISTRIBUTED localhost only; 3 workers; 3 slots; 30/30
+ok
+test_error_causes_ids_deadline_and_failed_requests_not_successes (test_benchmark.BenchmarkTests.test_error_causes_ids_deadline_and_failed_requests_not_successes) ... ok
+test_invalid_local_resource_configurations_are_rejected (test_benchmark.BenchmarkTests.test_invalid_local_resource_configurations_are_rejected) ... ok
+test_local_benchmark_concurrent_clients_metrics_reproducibility_and_graphs (test_benchmark.BenchmarkTests.test_local_benchmark_concurrent_clients_metrics_reproducibility_and_graphs) ... ok
+test_local_cnn_300_images_match_independent_python_and_parallel (test_benchmark.BenchmarkTests.test_local_cnn_300_images_match_independent_python_and_parallel) ... Mediciones IDENTIFY: 3 grupos de carga: 2 salida: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112347-a94c0c/real-graphs
+ETAPA6: 300/300 Java local secuencial/paralelo; max error Python= 2.220446049250313e-16 THREADS sequential=[1] parallel=[20, 21] peak=2
+ok
+test_parallel_distributed_profile_with_six_physical_cores (test_benchmark.BenchmarkTests.test_parallel_distributed_profile_with_six_physical_cores) ... skipped 'PARALLEL_DISTRIBUTED: emulacion requiere 6 nucleos fisicos disjuntos; disponibles 4. No acredita maquinas distintas.'
+test_post_operations_all_three_languages (test_benchmark.BenchmarkTests.test_post_operations_all_three_languages) ... ok
+test_independent_accuracy_and_persisted_confusion_matrix (test_cnn.AcceptanceTests.test_independent_accuracy_and_persisted_confusion_matrix) ... ok
+test_inference_does_not_open_sockets (test_cnn.AcceptanceTests.test_inference_does_not_open_sockets) ... ok
+test_inference_weights_from_another_directory (test_cnn.AcceptanceTests.test_inference_weights_from_another_directory) ... ok
+test_pixels_determine_prediction_and_filename_does_not (test_cnn.AcceptanceTests.test_pixels_determine_prediction_and_filename_does_not) ... ok
+test_dataset_generation_reproducible (test_cnn.DatasetTests.test_dataset_generation_reproducible) ... ok
+test_independent_balanced_splits (test_cnn.DatasetTests.test_independent_balanced_splits) ... ok
+test_invalid_images (test_cnn.ImageTests.test_invalid_images) ... ok
+test_normalization_and_resize (test_cnn.ImageTests.test_normalization_and_resize) ... ok
+test_pgm_text_binary_and_comments (test_cnn.ImageTests.test_pgm_text_binary_and_comments) ... ok
+test_png_filters_and_rgb (test_cnn.ImageTests.test_png_filters_and_rgb) ... ok
+test_png_round_trip_and_content_based_format (test_cnn.ImageTests.test_png_round_trip_and_content_based_format) ... ok
+test_convolution_known_values (test_cnn.MathTests.test_convolution_known_values) ... ok
+test_flatten_channel_and_row_order (test_cnn.MathTests.test_flatten_channel_and_row_order) ... ok
+test_full_pipeline_dimensions_and_shared_convolution (test_cnn.MathTests.test_full_pipeline_dimensions_and_shared_convolution) ... ok
+test_gradients_all_837_parameters (test_cnn.MathTests.test_gradients_all_837_parameters) ... ok
+test_invalid_inputs (test_cnn.MathTests.test_invalid_inputs) ... ok
+test_max_pooling_and_tie_order (test_cnn.MathTests.test_max_pooling_and_tie_order) ... ok
+test_mlp_reference (test_cnn.MathTests.test_mlp_reference) ... ok
+test_relu (test_cnn.MathTests.test_relu) ... ok
+test_softmax_stability (test_cnn.MathTests.test_softmax_stability) ... ok
+test_tiny_training_reproducible_and_all_layers_change (test_cnn.MathTests.test_tiny_training_reproducible_and_all_layers_change) ... ok
+test_weight_round_trip_and_immutable_model (test_cnn.MathTests.test_weight_round_trip_and_immutable_model) ... ok
+test_atomic_cold_load_matches_local_inference (test_cnn.WorkerIntegrationTests.test_atomic_cold_load_matches_local_inference) ... ok
+test_worker_from_other_directory_and_identify_validation (test_cnn.WorkerIntegrationTests.test_worker_from_other_directory_and_identify_validation) ... ok
+test_adam_two_updates_bias_correction_and_gradient_clipping (test_cnn_phase1.NumericalTests.test_adam_two_updates_bias_correction_and_gradient_clipping) ... ok
+test_evaluation_confusion_errors_absent_classes_and_configuration (test_cnn_phase1.NumericalTests.test_evaluation_confusion_errors_absent_classes_and_configuration) ... ok
+test_evaluation_loss_matches_reference_and_handles_zero_probabilities (test_cnn_phase1.NumericalTests.test_evaluation_loss_matches_reference_and_handles_zero_probabilities) ... ok
+test_gradients_all_parameters_more_seeds_and_labels (test_cnn_phase1.NumericalTests.test_gradients_all_parameters_more_seeds_and_labels) ... ok
+test_loss_large_common_offset_and_underflow (test_cnn_phase1.NumericalTests.test_loss_large_common_offset_and_underflow) ... ok
+test_pool_tie_backward_uses_first_winner (test_cnn_phase1.NumericalTests.test_pool_tie_backward_uses_first_winner) ... ok
+test_relu_zero_and_negative_block_backprop (test_cnn_phase1.NumericalTests.test_relu_zero_and_negative_block_backprop) ... ok
+test_training_decreases_loss_with_partial_batch_and_selects_validation (test_cnn_phase1.NumericalTests.test_training_decreases_loss_with_partial_batch_and_selects_validation) ... ok
+test_java_python_pixels_png_pgm_and_resize (test_cnn_phase1.PreprocessingParityTests.test_java_python_pixels_png_pgm_and_resize) ... ok
+test_java_request_python_cnn_java_response (test_cross_language.CrossLanguageTests.test_java_request_python_cnn_java_response) ... OK: Python -> Java
+ok
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112414-1aaec6
+test_300_images_both_modes_probabilities_and_classes (test_distributed.DistributedTests.test_300_images_both_modes_probabilities_and_classes) ... ETAPA3: test=300; correctos SEQUENTIAL/DISTRIBUTED=[300, 300]; max |p_seq-p_dist|=4.9948933877885793e-13
+ok
+test_all_partials_invalid_produce_error_and_legacy_nodes_are_skipped (test_distributed.DistributedTests.test_all_partials_invalid_produce_error_and_legacy_nodes_are_skipped) ... ok
+test_capabilities_and_raw_jobs_all_languages (test_distributed.DistributedTests.test_capabilities_and_raw_jobs_all_languages) ... ok
+test_configurable_threads_chunks_and_missing_model (test_distributed.DistributedTests.test_configurable_threads_chunks_and_missing_model) ... ok
+test_convolution_split_and_dense_split_between_two_workers (test_distributed.DistributedTests.test_convolution_split_and_dense_split_between_two_workers) ... ok
+test_intermediate_tensors_and_real_three_language_trace (test_distributed.DistributedTests.test_intermediate_tensors_and_real_three_language_trace) ... ETAPA3: max error absoluto intermedio=2.6645352591003757e-15
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|conv-0|/127.0.0.1:42761|Java|CONV|12987|1495474|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|conv-1|/127.0.0.1:59931|Python|CONV|405878|2099244|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|hidden-6-7|/127.0.0.1:59931|Python|DENSE|28819|1828442|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|hidden-0-2|/127.0.0.1:54595|CSharp|DENSE|2953|2265118|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|hidden-3-5|/127.0.0.1:42761|Java|DENSE|2456|2657970|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|output-0-0|/127.0.0.1:54595|CSharp|DENSE|718|767587|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|output-1-1|/127.0.0.1:42761|Java|DENSE|858|1059952|OK
+TASK|tensor-check|e6c112ad-b659-4f42-bb35-8289c96b6b97-301|output-2-2|/127.0.0.1:59931|Python|DENSE|15632|1303289|OK
+ok
+test_invalid_inputs_and_mode_preserve_stable_errors (test_distributed.DistributedTests.test_invalid_inputs_and_mode_preserve_stable_errors) ... ok
+test_invalid_partial_result_retried_and_never_accepted (test_distributed.DistributedTests.test_invalid_partial_result_retried_and_never_accepted) ... ok
+test_java_cli_both_modes_three_classes (test_distributed.DistributedTests.test_java_cli_both_modes_three_classes) ... ok
+test_job_validation_consistent_and_connection_reusable (test_distributed.DistributedTests.test_job_validation_consistent_and_connection_reusable) ... ok
+test_multiple_clients_reusing_external_ids_are_isolated (test_distributed.DistributedTests.test_multiple_clients_reusing_external_ids_are_isolated) ... ok
+test_one_node_cannot_silently_fall_back_to_whole_identify (test_distributed.DistributedTests.test_one_node_cannot_silently_fall_back_to_whole_identify) ... ok
+test_out_of_order_concurrent_chunks_and_layer_barriers (test_distributed.DistributedTests.test_out_of_order_concurrent_chunks_and_layer_barriers) ... ok
+test_timeout_is_bounded_and_next_request_recovers (test_distributed.DistributedTests.test_timeout_is_bounded_and_next_request_recovers) ... ok
+test_worker_dies_during_inference_and_rejoins (test_distributed.DistributedTests.test_worker_dies_during_inference_and_rejoins) ... ok
+test_a_real_gradients_and_training_same_as_sequential (test_distributed_training.DistributedTrainingTests.test_a_real_gradients_and_training_same_as_sequential) ... skipped 'real RabbitMQ training opt-in not enabled'
+test_b_duplicate_stale_and_failed_tasks_never_double_apply (test_distributed_training.DistributedTrainingTests.test_b_duplicate_stale_and_failed_tasks_never_double_apply) ... skipped 'real RabbitMQ training opt-in not enabled'
+test_c_timeout_missing_workers_and_bad_dataset_checkpoint (test_distributed_training.DistributedTrainingTests.test_c_timeout_missing_workers_and_bad_dataset_checkpoint) ... skipped 'real RabbitMQ training opt-in not enabled'
+test_d_parallel_local_inside_amqp_workers (test_distributed_training.DistributedTrainingTests.test_d_parallel_local_inside_amqp_workers) ... skipped 'real RabbitMQ training opt-in not enabled'
+test_e_malformed_task_error_and_worker_survives (test_distributed_training.DistributedTrainingTests.test_e_malformed_task_error_and_worker_survives) ... skipped 'real RabbitMQ training opt-in not enabled'
+test_f_worker_disconnect_requeues_assigned_tasks (test_distributed_training.DistributedTrainingTests.test_f_worker_disconnect_requeues_assigned_tasks) ... skipped 'real RabbitMQ training opt-in not enabled'
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112434-717762
+test_connection_refused_and_gui_can_retry (test_frontend.FrontendTests.test_connection_refused_and_gui_can_retry) ... ok
+test_gui_timeout_and_cancellation_close_resources (test_frontend.FrontendTests.test_gui_timeout_and_cancellation_close_resources) ... ok
+test_image_client_both_modes_real_server_three_classes (test_frontend.FrontendTests.test_image_client_both_modes_real_server_three_classes) ... ok
+test_protocol_bad_replies_fragmentation_and_absolute_deadline (test_frontend.FrontendTests.test_protocol_bad_replies_fragmentation_and_absolute_deadline) ... ok
+test_shared_preprocessing_every_pixel_png_pgm_alpha_and_resize (test_frontend.FrontendTests.test_shared_preprocessing_every_pixel_png_pgm_alpha_and_resize) ... ok
+test_swing_concurrent_out_of_order_real_inference_and_edt (test_frontend.FrontendTests.test_swing_concurrent_out_of_order_real_inference_and_edt) ... ok
+test_unit_components_ids_messages_jpeg_and_invalid_formats (test_frontend.FrontendTests.test_unit_components_ids_messages_jpeg_and_invalid_formats) ... ok
+test_duplicates_and_concurrent_commit_are_idempotent (test_gradient_aggregation.GradientTests.test_duplicates_and_concurrent_commit_are_idempotent) ... ok
+test_fundamental_unequal_partitions_gradients_and_one_update (test_gradient_aggregation.GradientTests.test_fundamental_unequal_partitions_gradients_and_one_update) ... ok
+test_invalid_stale_incomplete_conflicting_and_nonfinite (test_gradient_aggregation.GradientTests.test_invalid_stale_incomplete_conflicting_and_nonfinite) ... ok
+test_task_validation_dataset_weights_indices_and_version (test_gradient_aggregation.GradientTests.test_task_validation_dataset_weights_indices_and_version) ... ok
+test_weighted_known_values_not_average_of_means (test_gradient_aggregation.GradientTests.test_weighted_known_values_not_average_of_means) ... ok
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112511-fd8fff
+test_identify_300_independent_images_match_local (test_identify.IdentifyTests.test_identify_300_independent_images_match_local) ... ok
+test_identify_concurrent_unique_and_repeated_ids (test_identify.IdentifyTests.test_identify_concurrent_unique_and_repeated_ids) ... ok
+test_identify_fallback_after_corrupt_or_truncated_response (test_identify.IdentifyTests.test_identify_fallback_after_corrupt_or_truncated_response) ... ok
+test_identify_invalid_input_and_persistent_connection (test_identify.IdentifyTests.test_identify_invalid_input_and_persistent_connection) ... ok
+test_identify_invalid_utf8_and_truncation_do_not_stop_services (test_identify.IdentifyTests.test_identify_invalid_utf8_and_truncation_do_not_stop_services) ... ok
+test_identify_java_cli_three_classes (test_identify.IdentifyTests.test_identify_java_cli_three_classes) ... ok
+test_identify_java_client_rejects_bad_images_and_ids (test_identify.IdentifyTests.test_identify_java_client_rejects_bad_images_and_ids) ... ok
+test_identify_java_client_rejects_invalid_server_replies (test_identify.IdentifyTests.test_identify_java_client_rejects_invalid_server_replies) ... ok
+test_identify_java_preprocessing_matches_every_pixel (test_identify.IdentifyTests.test_identify_java_preprocessing_matches_every_pixel) ... ok
+test_identify_mixed_fragmented_and_coalesced_messages (test_identify.IdentifyTests.test_identify_mixed_fragmented_and_coalesced_messages) ... ok
+test_identify_more_than_sixteen_persistent_clients (test_identify.IdentifyTests.test_identify_more_than_sixteen_persistent_clients) ... ok
+test_identify_never_sent_to_java_or_csharp (test_identify.IdentifyTests.test_identify_never_sent_to_java_or_csharp) ... ok
+test_identify_python_frame_has_total_deadline (test_identify.IdentifyTests.test_identify_python_frame_has_total_deadline) ... ok
+test_identify_rejects_corrupt_worker_responses (test_identify.IdentifyTests.test_identify_rejects_corrupt_worker_responses) ... ok
+test_identify_timeout_and_slow_frame_are_bounded (test_identify.IdentifyTests.test_identify_timeout_and_slow_frame_are_bounded) ... ok
+test_identify_without_python_worker (test_identify.IdentifyTests.test_identify_without_python_worker) ... ok
+test_identify_worker_disconnect_and_restart (test_identify.IdentifyTests.test_identify_worker_disconnect_and_restart) ... ok
+test_identify_worker_error_propagated (test_identify.IdentifyTests.test_identify_worker_error_propagated) ... ok
+test_real_process_gradients_and_training_match_sequential (test_parallel_training.ParallelTests.test_real_process_gradients_and_training_match_sequential) ... ok
+test_worker_exception_does_not_update_model (test_parallel_training.ParallelTests.test_worker_exception_does_not_update_model) ... ok
+test_invalid_identify_responses (test_protocol.LocalClientTests.test_invalid_identify_responses) ... ok
+test_partial_receives (test_protocol.LocalClientTests.test_partial_receives) ... ok
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112531-3e862a
+test_benchmark_transport (test_protocol.ProtocolTests.test_benchmark_transport) ... ok
+test_concurrent_clients (test_protocol.ProtocolTests.test_concurrent_clients) ... ok
+test_documented_operations (test_protocol.ProtocolTests.test_documented_operations) ... ok
+test_existing_smoke_and_cli (test_protocol.ProtocolTests.test_existing_smoke_and_cli) ... ok
+test_fragmented_and_coalesced_frames (test_protocol.ProtocolTests.test_fragmented_and_coalesced_frames) ... ok
+test_invalid_and_truncated_frames (test_protocol.ProtocolTests.test_invalid_and_truncated_frames) ... ok
+test_invalid_messages_and_connection_reuse (test_protocol.ProtocolTests.test_invalid_messages_and_connection_reuse) ... ok
+test_language_configurations (test_protocol.ProtocolTests.test_language_configurations) ... ok
+test_local_reports_connection_failure (test_protocol.ProtocolTests.test_local_reports_connection_failure) ... ok
+test_nonfinite_computation_rejected (test_protocol.ProtocolTests.test_nonfinite_computation_rejected) ... ok
+test_numeric_reference (test_protocol.ProtocolTests.test_numeric_reference) ... ok
+test_ping_languages_and_round_robin (test_protocol.ProtocolTests.test_ping_languages_and_round_robin) ... ok
+test_python_identify_transport_only (test_protocol.ProtocolTests.test_python_identify_transport_only) ... ok
+test_relu_and_stable_softmax (test_protocol.ProtocolTests.test_relu_and_stable_softmax) ... ok
+test_worker_failover_and_unavailability (test_protocol.ProtocolTests.test_worker_failover_and_unavailability) ... ok
+test_z_no_unhandled_python_exceptions (test_protocol.ProtocolTests.test_z_no_unhandled_python_exceptions) ... ok
+test_amqp_reuses_coordinator_and_all_languages (test_rabbit_distributed.RabbitDistributedTests.test_amqp_reuses_coordinator_and_all_languages) ... skipped 'real RabbitMQ opt-in not enabled'
+test_a_real_profiles_correlated_equivalent_and_persistent (test_rabbit_integration.RabbitIntegrationTests.test_a_real_profiles_correlated_equivalent_and_persistent) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_b_duplicates_conflicts_and_invalid_dlq (test_rabbit_integration.RabbitIntegrationTests.test_b_duplicates_conflicts_and_invalid_dlq) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_c_retry_exhaustion_real_ttl_queue (test_rabbit_integration.RabbitIntegrationTests.test_c_retry_exhaustion_real_ttl_queue) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_d_control_and_logs_real_queues (test_rabbit_integration.RabbitIntegrationTests.test_d_control_and_logs_real_queues) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_d_multiple_requests_and_consumer_count (test_rabbit_integration.RabbitIntegrationTests.test_d_multiple_requests_and_consumer_count) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_e_process_restart_durable_input (test_rabbit_integration.RabbitIntegrationTests.test_e_process_restart_durable_input) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_f_real_connection_interruption_and_reconnect (test_rabbit_integration.RabbitIntegrationTests.test_f_real_connection_interruption_and_reconnect) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_g_real_broker_application_restart (test_rabbit_integration.RabbitIntegrationTests.test_g_real_broker_application_restart) ... skipped 'real RabbitMQ test opt-in not enabled'
+test_cache_failure_is_retryable_and_capacity_is_bounded (test_rabbit_messages.MessageTests.test_cache_failure_is_retryable_and_capacity_is_bounded) ... ok
+test_config_limits_and_secret_repr (test_rabbit_messages.MessageTests.test_config_limits_and_secret_repr) ... ok
+test_duplicate_coalescing_conflicts_and_ttl (test_rabbit_messages.MessageTests.test_duplicate_coalescing_conflicts_and_ttl) ... ok
+test_invalid_requests (test_rabbit_messages.MessageTests.test_invalid_requests) ... ok
+test_local_concurrency_immutable_weights_and_same_prediction (test_rabbit_messages.MessageTests.test_local_concurrency_immutable_weights_and_same_prediction) ... ok
+test_parser_and_sizes (test_rabbit_messages.MessageTests.test_parser_and_sizes) ... ok
+test_valid_profiles_same_pixels_result_shapes_and_correlation (test_rabbit_messages.MessageTests.test_valid_profiles_same_pixels_result_shapes_and_correlation) ... ok
+test_bad_json_no_result_without_id (test_rabbit_worker.WorkerTests.test_bad_json_no_result_without_id) ... ok
+test_duplicate_reuses_inference_but_republishes_correlated_result (test_rabbit_worker.WorkerTests.test_duplicate_reuses_inference_but_republishes_correlated_result) ... ok
+test_error_queue_publish_failure_never_ack (test_rabbit_worker.WorkerTests.test_error_queue_publish_failure_never_ack) ... ok
+test_permanent_error_result_and_error_queue_before_ack (test_rabbit_worker.WorkerTests.test_permanent_error_result_and_error_queue_before_ack) ... ok
+test_publish_confirmed_channel_then_ack (test_rabbit_worker.WorkerTests.test_publish_confirmed_channel_then_ack) ... ok
+test_publish_failure_never_ack (test_rabbit_worker.WorkerTests.test_publish_failure_never_ack) ... ok
+test_retry_and_exhaustion (test_rabbit_worker.WorkerTests.test_retry_and_exhaustion) ... ok
+test_atomic_checkpoint_resumes_mid_epoch_without_repeated_adam (test_training_recovery.RecoveryTests.test_atomic_checkpoint_resumes_mid_epoch_without_repeated_adam) ... ok
+test_corrupt_checkpoint_rejected (test_training_recovery.RecoveryTests.test_corrupt_checkpoint_rejected) ... ok
+test_only_one_coordinator_lease_for_output (test_training_recovery.RecoveryTests.test_only_one_coordinator_lease_for_output) ... ok
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112539-bb9a7b
+test_connection_limit_rejects_excess_and_recovers (test_worker_limits.WorkerLimitTests.test_connection_limit_rejects_excess_and_recovers) ... ok
+test_coordinator_queue_saturation_is_bounded_and_recovers (test_worker_limits.WorkerLimitTests.test_coordinator_queue_saturation_is_bounded_and_recovers) ... ok
+test_frame_deadline_covers_header_and_body_despite_drips (test_worker_limits.WorkerLimitTests.test_frame_deadline_covers_header_and_body_despite_drips) ... ok
+test_idle_connection_does_not_occupy_compute_slot (test_worker_limits.WorkerLimitTests.test_idle_connection_does_not_occupy_compute_slot) ... ok
+test_large_valid_frame_matches_all_workers (test_worker_limits.WorkerLimitTests.test_large_valid_frame_matches_all_workers) ... ok
+
+----------------------------------------------------------------------
+Ran 143 tests in 122.600s
+
+OK (skipped=16)
+OK: cliente Java -> TCP -> servidor Java -> worker Python -> resultado circulo
+NOTA: RabbitMQ/BD/Android/Web no son parte de esta prueba
+NO VERIFICADO: broker RabbitMQ real (usar --rabbit)

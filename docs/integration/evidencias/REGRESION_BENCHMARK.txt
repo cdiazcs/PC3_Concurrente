@@ -1,0 +1,17 @@
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112242-9ea0c9
+test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines (test_benchmark.BenchmarkTests.test_distributed_profiles_nodes_limits_and_localhost_is_not_three_machines) ... ETAPA6: DISTRIBUTED localhost only; 3 workers; 3 slots; 30/30
+ok
+test_error_causes_ids_deadline_and_failed_requests_not_successes (test_benchmark.BenchmarkTests.test_error_causes_ids_deadline_and_failed_requests_not_successes) ... ok
+test_invalid_local_resource_configurations_are_rejected (test_benchmark.BenchmarkTests.test_invalid_local_resource_configurations_are_rejected) ... ok
+test_local_benchmark_concurrent_clients_metrics_reproducibility_and_graphs (test_benchmark.BenchmarkTests.test_local_benchmark_concurrent_clients_metrics_reproducibility_and_graphs) ... ok
+test_local_cnn_300_images_match_independent_python_and_parallel (test_benchmark.BenchmarkTests.test_local_cnn_300_images_match_independent_python_and_parallel) ... Mediciones IDENTIFY: 3 grupos de carga: 2 salida: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112242-9ea0c9/real-graphs
+ETAPA6: 300/300 Java local secuencial/paralelo; max error Python= 2.220446049250313e-16 THREADS sequential=[1] parallel=[20, 21] peak=2
+ok
+test_parallel_distributed_profile_with_six_physical_cores (test_benchmark.BenchmarkTests.test_parallel_distributed_profile_with_six_physical_cores) ... skipped 'PARALLEL_DISTRIBUTED: emulacion requiere 6 nucleos fisicos disjuntos; disponibles 4. No acredita maquinas distintas.'
+test_post_operations_all_three_languages (test_benchmark.BenchmarkTests.test_post_operations_all_three_languages) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 21.780s
+
+OK (skipped=1)

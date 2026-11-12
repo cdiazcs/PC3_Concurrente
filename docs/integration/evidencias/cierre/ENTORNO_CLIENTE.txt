@@ -1,0 +1,8 @@
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-114155-3555d0
+test_cli_environment_mode_and_deadline (test_identify.IdentifyTests.test_cli_environment_mode_and_deadline) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 9.138s
+
+OK

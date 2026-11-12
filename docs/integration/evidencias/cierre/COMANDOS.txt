@@ -1,0 +1,53 @@
+Fecha usuario: 2026-11-12, America/Lima. CWD: raiz del repositorio.
+
+Git / preservacion:
+git status
+git branch --show-current
+git log -5 --oneline
+git diff --stat
+git rev-parse HEAD integration
+# Respaldo con tarfile de Python y manifest SHA-256 de 55 archivos en:
+# /tmp/pc3-fase1-respaldo-d1gwc45p
+git switch integration
+# Se verificaron los 55 hashes antes de editar en integration.
+
+Revalidacion inicial, salida REVALIDACION_INICIAL.txt:
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --tcp
+
+Dependencias adicionales solo en venv:
+.venv/bin/python -m pip install -r databases/mariadb/requirements.txt
+
+Perfiles:
+PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --member 1
+PATH=/tmp/pc3-python-only .venv/bin/python scripts/check_integration.py --member 2 --tcp
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --member 3 --tcp
+# /tmp/pc3-python-only es un directorio vacio: no Java ni .NET en PATH.
+
+Regresion final (57 unitarios, 144 en discovery y smoke TCP):
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --tcp
+
+Regresion adicional modo/timeout CLI:
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHONPATH=tests:. .venv/bin/python -m unittest test_identify.IdentifyTests.test_cli_environment_mode_and_deadline -v
+
+# Con credenciales stock del broker local suministradas en el entorno:
+.venv/bin/python scripts/rabbit_java_integration.py
+PC3_RABBIT_INTEGRATION=1 .venv/bin/python -m unittest discover -s tests -p 'test_rabbit_integration.py' -v
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PC3_RABBIT_INTEGRATION=1 .venv/bin/python -m unittest discover -s tests -p 'test_rabbit_distributed.py' -v
+.venv/bin/python scripts/check_node.py 2
+.venv/bin/python scripts/check_node.py 1
+# Salida esperada 1: credenciales PostgreSQL ausentes; RabbitMQ si autentico.
+.venv/bin/python scripts/check_node.py 3
+# Salida esperada 1: credenciales MariaDB ausentes; no se alteraron datos.
+
+Aislamiento de pruebas locales respecto de un despliegue remoto:
+PATH=/tmp/pc3-python-only WORKER_PYTHON_HOST=203.0.113.1 PC3_WORKER_TIMEOUT_MS=1 .venv/bin/python scripts/check_integration.py --member 2 --tcp
+# 203.0.113.1 es una direccion reservada para documentacion usada solo como
+# entrada hostil de prueba. No se uso como Tailscale ni se abrio conexion a ella.
+
+Cierre:
+python3 -m py_compile scripts/*.py
+bash -n scripts/build.sh scripts/check_integration.sh
+git diff --check
+git status --short --branch
+# Comparacion byte a byte pesos y dataset frente a HEAD: intactos.
+# No se ejecutaron commit, push, merge ni rebase.

@@ -1,0 +1,17 @@
+OK: JDK 21+; bytecode release 17
+test_a_active_blocked_unknown_and_invalid_image (test_phase2_integration.Phase2IntegrationTests.test_a_active_blocked_unknown_and_invalid_image) ... ok
+test_b_duplicate_and_concurrent_races (test_phase2_integration.Phase2IntegrationTests.test_b_duplicate_and_concurrent_races) ... ok
+test_c_real_mariadb_races_and_immutable_verdict (test_phase2_integration.Phase2IntegrationTests.test_c_real_mariadb_races_and_immutable_verdict) ... ok
+test_d_postgres_atomic_rollback (test_phase2_integration.Phase2IntegrationTests.test_d_postgres_atomic_rollback) ... ok
+test_e_ten_fifty_hundred_concurrent (test_phase2_integration.Phase2IntegrationTests.test_e_ten_fifty_hundred_concurrent) ... REAL: 10/10 solicitudes concurrentes BD2 -> CNN -> BD1, IDs y COMMIT confirmados
+REAL: 50/50 solicitudes concurrentes BD2 -> CNN -> BD1, IDs y COMMIT confirmados
+REAL: 100/100 solicitudes concurrentes BD2 -> CNN -> BD1, IDs y COMMIT confirmados
+ok
+test_f_desktop_android_shared_contract_and_web (test_phase2_integration.Phase2IntegrationTests.test_f_desktop_android_shared_contract_and_web) ... ok
+test_g_outbox_commit_before_publish_recovery (test_phase2_integration.Phase2IntegrationTests.test_g_outbox_commit_before_publish_recovery) ... ok
+test_h_disconnected_validation_inference_and_persistence (test_phase2_integration.Phase2IntegrationTests.test_h_disconnected_validation_inference_and_persistence) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 26.485s
+
+OK

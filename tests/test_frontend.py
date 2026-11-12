@@ -1,3 +1,4 @@
+import os
 """ETAPA 4: Swing headless + TCP real, sin dependencias. python tests/test_frontend.py
 
 Las capturas headless verifican el render de componentes, no una ventana abierta.
@@ -30,14 +31,14 @@ class FrontendTests(protocol.ProtocolTests):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.compile(['javac', '--release', '8', '-encoding', 'UTF-8', '-cp', str(cls.artifacts),
+        cls.compile(['javac', '--release', '17', '-encoding', 'UTF-8', '-cp', str(cls.artifacts) + os.pathsep + str(ROOT/'lib'/'*'),
                      '-d', str(cls.artifacts), 'clients-java/ClientCli.java']
                     + [str(p) for p in sorted((ROOT/'frontend-java').glob('*.java'))]
                     + ['tests/FrontendChecks.java'], 'javac-frontend')
         cls.model = CNN.load()
 
     def java(self, *args, timeout=35):
-        result = subprocess.run(['java', '-Djava.awt.headless=true', '-cp', str(self.artifacts),
+        result = subprocess.run(['java', '-Djava.awt.headless=true', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'),
                                  'FrontendChecks', *map(str, args)], cwd=ROOT, capture_output=True,
                                 text=True, encoding='utf-8', errors='replace', timeout=timeout)
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
@@ -152,7 +153,7 @@ def visual_smoke():
         def delay(fields):
             if fields[0] == 'IDENTIFY': time.sleep(.4 if fields[3] == 'SEQUENTIAL' else .15)
         with Forwarder(FrontendTests.central, before=delay) as proxy:
-            result = subprocess.run(['java', '-cp', str(FrontendTests.artifacts), 'FrontendChecks',
+            result = subprocess.run(['java', '-cp', str(FrontendTests.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'FrontendChecks',
                                      'flow', '127.0.0.1', str(proxy.port), str(ROOT/'model/examples'),
                                      str(FrontendTests.artifacts/'ui-visual'), '--visual'],
                                     cwd=ROOT, capture_output=True, text=True, encoding='utf-8',

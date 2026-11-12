@@ -1,3 +1,4 @@
+import os
 """ETAPA 3: operaciones TCP reales en Java/Python/C#, solo biblioteca estandar.
 
 python tests/test_distributed.py
@@ -107,7 +108,7 @@ class DistributedTests(protocol.ProtocolTests):
         port = cls.free_port()
         command = ['java'] + ['-Dopenaicubes.'+key+'='+str(value)
                               for key, value in settings.items()]
-        command += ['-cp', str(cls.artifacts), 'CentralServer', str(port)]
+        command += ['-cp', str(cls.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'CentralServer', str(port)]
         cls.start(command + ['127.0.0.1:'+str(p) for p in ports], port, name)
         return port
 
@@ -328,7 +329,7 @@ class DistributedTests(protocol.ProtocolTests):
 
     def test_worker_dies_during_inference_and_rejoins(self):
         worker_port = self.free_port()
-        command = ['java', '-cp', str(self.artifacts), 'WorkerJava', str(worker_port)]
+        command = ['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'WorkerJava', str(worker_port)]
         worker = self.start(command, worker_port, 'Java-killed')
         killed = threading.Event()
 
@@ -451,7 +452,7 @@ class DistributedTests(protocol.ProtocolTests):
             for label, name in enumerate(CLASSES):
                 image = ROOT/'model/examples'/(name+'-0.png')
                 request_id = mode+'-'+name
-                result = subprocess.run(['java', '-cp', str(self.artifacts), 'ClientCli',
+                result = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'ClientCli',
                                          '127.0.0.1', str(self.distributed), 'IDENTIFY', str(image),
                                          request_id, mode], cwd=ROOT, capture_output=True, text=True,
                                         encoding='utf-8', errors='replace', timeout=25)

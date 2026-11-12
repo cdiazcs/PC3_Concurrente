@@ -1,5 +1,5 @@
 -- BD1 del modelo A. Diseño inicial: ejecutar sobre PostgreSQL.
--- ESTADO: sólo schema; aún falta worker AMQP, consultas y pruebas concurrentes.
+-- Fase II: aplicar despues 02_phase2.sql; consumidor db.PersistenceWorker.
 BEGIN;
 CREATE TABLE IF NOT EXISTS solicitudes (
   id_solicitud VARCHAR(128) PRIMARY KEY,

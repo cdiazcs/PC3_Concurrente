@@ -11,16 +11,25 @@ public class MensajesRabbit {
         public String timestamp;
         public String tipo = "INFERENCIA";
         public String modeloDestino;
-        public String imagenBase64; 
         public int intento = 1;
         public PayloadPeticion payload;
 
         public static class PayloadPeticion {
             public String modo;
+            public Imagen imagen;
+        }
+        public static class Imagen {
+            public String formato = "VECTOR_NORMALIZADO";
+            public int ancho = 16;
+            public int alto = 16;
+            public List<Double> valores;
         }
     }
 
     public static class RespuestaIA {
+        public String idCliente;
+        public String modeloDestino;
+        public String tipo;
         public int schemaVersion = 1;
         public String idSolicitud;
         public String timestamp;

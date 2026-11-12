@@ -9,6 +9,7 @@ import time
 import unittest
 
 import test_protocol as protocol
+ROOT = protocol.ROOT
 from test_distributed import Forwarder
 
 
@@ -30,7 +31,7 @@ class WorkerLimitTests(protocol.ProtocolTests):
     def worker(self, language, *, clients=4, timeout_ms=500, threads=1):
         port = self.free_port()
         commands = {
-            'Java': ['java', '-cp', str(self.artifacts), 'WorkerJava'],
+            'Java': ['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'WorkerJava'],
             'Python': [sys.executable, 'workers/python/worker.py'],
             'CSharp': ['dotnet', str(self.artifacts/'csharp/Worker.dll')],
         }
@@ -141,7 +142,7 @@ class WorkerLimitTests(protocol.ProtocolTests):
         with Forwarder(self.endpoints['Java'], before=before) as java:
             port = self.free_port()
             self.start(['java', '-Dopenaicubes.taskThreads=1', '-Dopenaicubes.maxQueuedChunks=2',
-                        '-cp', str(self.artifacts), 'CentralServer', str(port),
+                        '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'CentralServer', str(port),
                         '127.0.0.1:'+str(java.port),
                         '127.0.0.1:'+str(self.endpoints['Python'])], port, 'queue-limits')
             pixels = ','.join(['0']*256)

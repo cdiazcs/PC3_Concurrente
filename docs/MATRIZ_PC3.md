@@ -1,3 +1,14 @@
+# Actualización de Fase II
+
+Resultados verificables: [FASE2_RESULTADOS](integration/FASE2_RESULTADOS.md).
+PostgreSQL transaccional/outbox, validación MariaDB, RabbitMQ completo y
+Desktop/Web pasaron integración local. Android tiene código y contrato JVM;
+APK/dispositivo y tres equipos siguen pendientes. El PDF oficial no está en el
+repositorio: las referencias de páginas y dudas de la matriz histórica que
+sigue no se pudieron contrastar directamente en esta sesión.
+
+---
+
 # Matriz de cumplimiento PC3 (enunciado P3cc4P1-262_v07)
 
 **Criterios de cierre:** `BASE` = existe en el ZIP de etapa anterior, `ESQUELETO` = diseño/scripts iniciales sin integración, `PENDIENTE` = requiere implementación y/o evidencia.

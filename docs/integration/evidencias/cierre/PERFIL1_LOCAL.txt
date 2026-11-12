@@ -1,0 +1,15 @@
+Perfil integrante: 1
+Python: 3.14.4
+OK: pika==1.3.2
+OK: JDK 21+; bytecode release 17
+OK: sintaxis Python
+test_java_request_python_cnn_java_response (test_cross_language.CrossLanguageTests.test_java_request_python_cnn_java_response) ... OK: Python -> Java
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 5.001s
+
+OK
+NO VERIFICADO: integracion TCP (usar --tcp)
+NO VERIFICADO: inferencia RabbitMQ real (usar --rabbit con all/1)
+NO VERIFICADO: autenticacion de servicios externos (usar --services --member N)

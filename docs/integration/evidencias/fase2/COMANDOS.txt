@@ -1,0 +1,53 @@
+Fecha usuario: 2026-11-12, America/Lima. CWD: raiz del repositorio.
+
+Git (antes de editar):
+git status
+git branch --show-current
+git log -5 --oneline
+git diff > /tmp/pc3-fase2-inicial.diff
+# Rama integration, HEAD 9a4eda3; cambios de Fase I preservados.
+
+Regresion inicial Fase I:
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --tcp
+
+Disponibilidad:
+docker info --format '{{.ServerVersion}}'
+# Sin acceso al socket Docker. Se usaron procesos SQL temporales propios.
+# Los binarios PostgreSQL 18 estaban disponibles en /usr/lib/postgresql/18/bin.
+# MariaDB se descargo/extrajo, NO se instalo globalmente:
+cd /tmp/pc3-mariadb-packages
+apt-get download mariadb-server-core mariadb-server mariadb-client-core mariadb-common
+# dpkg-deb -x de cada paquete en /tmp/pc3-mariadb-packages/extracted
+
+Pruebas reales, con credenciales stock del broker loopback solo en el entorno:
+.venv/bin/python scripts/phase2_integration.py --isolated --mariadb-base /tmp/pc3-mariadb-packages/extracted/usr
+# Se repitio tras fallos hasta aprobar la version final, incluidos 10/50/100
+# concurrentes, Swing UI en headless, HTTP, SQL rollback y outbox.
+# El runner crea cuentas aleatorias y bases temporales pc3_test_*;
+# cierra sus procesos SQL/aplicaciones y elimina solo sus colas propias.
+
+Regresion final (63 unitarios, 159 descubiertos y smoke):
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --tcp
+
+Contratos Fase II:
+.venv/bin/python -m unittest discover -s tests -p test_phase2_contracts.py -v
+
+Android, cache local a build/:
+GRADLE_USER_HOME="$PWD/build/android-gradle" clients/android/gradlew -p clients/android :protocol:contractTest
+# BUILD SUCCESSFUL: contrato JVM, NO Android APK.
+GRADLE_USER_HOME="$PWD/build/android-gradle" clients/android/gradlew -p clients/android :app:assembleDebug
+# Fallo real: SDK location not found. No se instalaron SDK ni aceptaron licencias.
+
+Comprobacion adicional de startup:
+python3 scripts/build.py --component java
+# Java CentralServer con SYSTEM_PIPELINE=FULL, INFERENCE_TRANSPORT=RABBITMQ,
+# BACKEND_CLIENT_TIMEOUT_MS=30000: codigo 1 inmediato por timeout incoherente,
+# antes de conexiones. Log ARRANQUE_CONFIG_INVALIDA.txt.
+
+Cierre:
+python3 -m py_compile scripts/*.py messaging/database_worker.py databases/mariadb/validator_worker.py
+bash -n scripts/build.sh scripts/check_integration.sh clients/android/gradlew
+git diff --check
+git status --short --branch
+# Pesos y dataset comparados byte a byte contra HEAD: intactos.
+# No se ejecutaron commit, push, merge ni rebase.

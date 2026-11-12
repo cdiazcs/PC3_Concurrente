@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class WebGateway {
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(System.getenv().getOrDefault("HTTP_BIND_HOST", "127.0.0.1"), Integer.parseInt(System.getenv().getOrDefault("HTTP_PORT", "8080"))), 0);
         server.createContext("/api/predict", new PredictHandler());
         server.setExecutor(null);
         System.out.println("WebGateway escuchando en el puerto 8080...");
@@ -31,12 +31,25 @@ public class WebGateway {
                 InputStream is = exchange.getRequestBody();
                 String pixels = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 
-                String clientId = "web-client";
+                String clientId = "web-" + java.util.UUID.randomUUID();
                 System.out.println("Petición HTTP recibida del cliente Web.");
                 
                 // Llamamos a la lógica de RabbitMQ que ya creamos en CentralServer
                 // (Asegúrate de haber puesto 'public static' a procesarConRabbitMQ en CentralServer)
-                String resultTCP = CentralServer.procesarConRabbitMQ(clientId, pixels);
+                String resultTCP;
+                try (java.net.Socket backend = new java.net.Socket()) {
+                    backend.connect(new InetSocketAddress(System.getenv().getOrDefault("BACKEND_HOST", "127.0.0.1"),
+                        Integer.parseInt(System.getenv().getOrDefault("BACKEND_PORT", "9000"))), 3000);
+                    backend.setSoTimeout(28000);
+                    DataOutputStream output = new DataOutputStream(backend.getOutputStream());
+                    DataInputStream input = new DataInputStream(backend.getInputStream());
+                    byte[] request = ("IDENTIFY|"+clientId+"|"+pixels+"|SEQUENTIAL").getBytes(StandardCharsets.UTF_8);
+                    output.writeInt(request.length); output.write(request); output.flush();
+                    int length = input.readInt();
+                    if (length < 1 || length > 2_000_000) throw new IOException("invalid_backend_frame");
+                    byte[] reply = new byte[length]; input.readFully(reply);
+                    resultTCP = new String(reply, StandardCharsets.UTF_8);
+                }
                 
                 // Convertimos "RESULT|id|1|3|0.9,0.05,0.05" a un JSON
                 String respuestaJson = convertirTCPaJSON(resultTCP);

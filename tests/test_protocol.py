@@ -1,3 +1,4 @@
+import os
 """Auditoria TCP real, solo stdlib: python tests/test_protocol.py.
 
 Compila fuentes y prueba Java/Python/C# y CentralServer en puertos locales libres.
@@ -9,6 +10,7 @@ from datetime import datetime
 import math
 from pathlib import Path
 import random
+import shutil
 import socket
 import struct
 import subprocess
@@ -43,13 +45,16 @@ def csv(values):
 class ProtocolTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        for tool in ('java', 'javac', 'dotnet'):
+            if not shutil.which(tool):
+                raise unittest.SkipTest('NO VERIFICADO: suite TCP multilenguaje requiere ' + tool)
         run_id = datetime.now().strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:6]
         cls.artifacts = ROOT / 'build' / ('stage0-' + run_id)
         cls.artifacts.mkdir(parents=True)
         cls.processes, cls.logs, cls.ports = [], [], set()
         cls.addClassCleanup(cls.cleanup)
         print('\nArtefactos:', cls.artifacts, flush=True)
-        cls.compile(['javac', '--release', '8', '-encoding', 'UTF-8', '-d',
+        cls.compile(['javac', '--release', '17', '-encoding', 'UTF-8', '-d',
                      str(cls.artifacts), 'server-java/CentralServer.java', 'server-java/DistributedCnn.java',
                      'clients-java/ClientCli.java', 'workers/java/WorkerJava.java',
                      'benchmarks/Benchmark.java', 'benchmarks/CnnBenchmark.java',
@@ -59,7 +64,7 @@ class ProtocolTests(unittest.TestCase):
                     'dotnet-build')
         cls.endpoints = {}
         for language, command in [
-            ('Java', ['java', '-cp', str(cls.artifacts), 'WorkerJava']),
+            ('Java', ['java', '-cp', str(cls.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'WorkerJava']),
             ('Python', [sys.executable, 'workers/python/worker.py']),
             ('CSharp', ['dotnet', str(cls.artifacts / 'csharp' / 'Worker.dll')]),
         ]:
@@ -71,6 +76,11 @@ class ProtocolTests(unittest.TestCase):
 
     @classmethod
     def compile(cls, command, name):
+        if command[0] == 'javac':
+            if '-cp' not in command:
+                command += ['-cp', str(ROOT/'lib'/'*')]
+            sources = {str(Path(item).resolve()) for item in command if item.endswith('.java')}
+            command += [str(p) for p in (ROOT/'server-java').rglob('*.java') if str(p.resolve()) not in sources]
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                                 encoding='utf-8', errors='replace', timeout=90)
         (cls.artifacts / (name + '.log')).write_text(result.stdout + result.stderr,
@@ -108,7 +118,7 @@ class ProtocolTests(unittest.TestCase):
     @classmethod
     def start_central(cls, name, workers):
         port = cls.free_port()
-        command = ['java', '-cp', str(cls.artifacts), 'CentralServer', str(port)]
+        command = ['java', '-cp', str(cls.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'CentralServer', str(port)]
         cls.start(command + ['127.0.0.1:' + str(p) for p in workers], port, name)
         return port
 
@@ -292,7 +302,7 @@ class ProtocolTests(unittest.TestCase):
             for message, kind in TESTS:
                 check(exchange('127.0.0.1', port, message), kind)
         worker_port = self.free_port()
-        worker = self.start(['java', '-cp', str(self.artifacts), 'WorkerJava', str(worker_port)],
+        worker = self.start(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'WorkerJava', str(worker_port)],
                             worker_port, 'Java-disconnect')
         isolated = self.start_central('Central-unavailable', [worker_port])
         worker.terminate()
@@ -303,14 +313,14 @@ class ProtocolTests(unittest.TestCase):
     def test_existing_smoke_and_cli(self):
         commands = [[sys.executable, 'tests/smoke_test.py']
                     + ['127.0.0.1:' + str(port) for port in self.endpoints.values()],
-                    ['java', '-cp', str(self.artifacts), 'ClientCli', '127.0.0.1', str(self.central)]]
+                    ['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'ClientCli', '127.0.0.1', str(self.central)]]
         for command in commands:
             result = subprocess.run(command, cwd=ROOT, capture_output=True, timeout=30)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_benchmark_transport(self):
         output = self.artifacts / 'benchmark-smoke.csv'
-        result = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark',
+        result = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'benchmarks.Benchmark',
                                  '127.0.0.1', str(self.central), '12', '3', '1', '3',
                                  'audit-localhost', str(output), '42'], cwd=ROOT,
                                 capture_output=True, timeout=30)

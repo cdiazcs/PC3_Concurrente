@@ -9,6 +9,7 @@ Gateway HTTP/1.1 propio sobre sockets estándar (sin frameworks web ni WebSocket
 import argparse
 import base64
 import json
+import math
 import os
 import re
 import socket
@@ -24,7 +25,7 @@ from urllib.parse import unquote
 MAX_HTTP_BODY = 2_000_000      # 2 MB máximo según PROTOCOLO_TCP_V1.md
 MAX_HEADER_BYTES = 16_384      # 16 KB máximo para cabeceras HTTP
 HTTP_READ_TIMEOUT = 10.0       # Timeout contra requests incompletas/lentas
-TCP_BACKEND_TIMEOUT = 15.0     # Timeout de respuesta desde CentralServer
+TCP_BACKEND_TIMEOUT = float(os.getenv("WEB_BACKEND_TIMEOUT_SECONDS", "80"))     # Timeout de respuesta desde CentralServer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WEB_DIR = REPO_ROOT / "clients" / "web"
@@ -52,26 +53,31 @@ def send_tcp_frame(host: str, port: int, message: str, timeout: float = TCP_BACK
         raise ValueError("tcp_payload_too_large")
 
     with socket.create_connection((host, port), timeout=min(5.0, timeout)) as sock:
+        deadline=time.monotonic()+timeout
         sock.settimeout(timeout)
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         sock.sendall(struct.pack(">I", len(payload)) + payload)
 
-        header = _recv_exact(sock, 4)
+        header = _recv_exact(sock, 4, deadline)
         if not header:
             raise ConnectionError("backend_eof_header")
         resp_len = struct.unpack(">I", header)[0]
         if resp_len <= 0 or resp_len > MAX_HTTP_BODY:
             raise ValueError("backend_invalid_length")
 
-        body = _recv_exact(sock, resp_len)
+        body = _recv_exact(sock, resp_len, deadline)
         if not body:
             raise ConnectionError("backend_eof_body")
         return body.decode("utf-8")
 
 
-def _recv_exact(sock: socket.socket, n: int) -> bytes:
+def _recv_exact(sock: socket.socket, n: int, deadline=None) -> bytes:
     chunks = bytearray()
     while len(chunks) < n:
+        if deadline is not None:
+            remaining=deadline-time.monotonic()
+            if remaining<=0:raise TimeoutError('backend_timeout')
+            sock.settimeout(remaining)
         part = sock.recv(n - len(chunks))
         if not part:
             return b""
@@ -112,6 +118,10 @@ def validate_and_extract_pixels(req_json: dict) -> tuple[str, str, str, str, lis
     modelo_destino = str(req_json.get("modeloDestino") or "A").strip().upper()
     modo = str(req_json.get("modo") or "SEQUENTIAL").strip().upper()
 
+    if modelo_destino != 'A':
+        raise ValueError('only_model_A_available')
+    if os.getenv('CLIENT_PROTOCOL','V1') == 'V2' and (not isinstance(req_json.get('idCliente'),str) or not req_json['idCliente'].strip()):
+        raise ValueError('client_identity_required')
     if not ID_REGEX.match(id_solicitud):
         raise ValueError("invalid_idSolicitud")
     if not ID_REGEX.match(id_cliente):
@@ -156,13 +166,16 @@ def parse_tcp_identify_reply(reply: str, id_solicitud: str) -> dict:
     """Convierte `RESULT|id|1|3|p0,p1,p2` o `ERROR|id|code` a diccionario."""
     parts = reply.split("|")
     if len(parts) == 3 and parts[0] == "ERROR":
+        if parts[1] != id_solicitud or not re.fullmatch(r'[A-Za-z0-9_:-]{1,128}',parts[2]):
+            raise RuntimeError('invalid_backend_response_id')
         raise RuntimeError(f"backend_error:{parts[2]}")
 
     if len(parts) != 5 or parts[0] != "RESULT" or parts[1] != id_solicitud or parts[2] != "1" or parts[3] != "3":
         raise RuntimeError("invalid_backend_response_format")
 
-    probs = [float(x) for x in parts[4].split(",")]
-    if len(probs) != 3:
+    try:probs = [float(x) for x in parts[4].split(",")]
+    except ValueError:raise RuntimeError('invalid_probability_vector') from None
+    if len(probs) != 3 or any(not math.isfinite(p) or not 0<=p<=1 for p in probs) or abs(sum(probs)-1)>1e-8:
         raise RuntimeError("invalid_probability_vector")
 
     labels = ["circulo", "cruz", "triangulo"]
@@ -184,6 +197,7 @@ class HttpGatewayServer:
         self.backend_host = backend_host
         self.backend_port = backend_port
         self._stop_event = threading.Event()
+        self._slots=threading.BoundedSemaphore(int(os.getenv("WEB_MAX_CLIENTS","128")))
         self._sock: socket.socket | None = None
 
     def serve_forever(self) -> None:
@@ -199,8 +213,12 @@ class HttpGatewayServer:
         while not self._stop_event.is_set():
             try:
                 conn, addr = self._sock.accept()
-                t = threading.Thread(target=self._handle_client, args=(conn, addr), daemon=True)
-                t.start()
+                if not self._slots.acquire(blocking=False):
+                    conn.close();continue
+                t = threading.Thread(target=self._serve_client, args=(conn, addr), daemon=True)
+                try:t.start()
+                except Exception:
+                    conn.close();self._slots.release();raise
             except socket.timeout:
                 continue
             except OSError:
@@ -213,6 +231,10 @@ class HttpGatewayServer:
                 self._sock.close()
             except OSError:
                 pass
+
+    def _serve_client(self,conn,addr):
+        try:self._handle_client(conn,addr)
+        finally:self._slots.release()
 
     def _handle_client(self, conn: socket.socket, addr: tuple) -> None:
         with conn:
@@ -243,7 +265,11 @@ class HttpGatewayServer:
     def _read_http_request(self, conn: socket.socket) -> tuple[str, str, dict[str, str], bytes] | None:
         buffer = bytearray()
         header_end = -1
+        deadline=time.monotonic()+HTTP_READ_TIMEOUT
         while header_end == -1:
+            remaining=deadline-time.monotonic()
+            if remaining<=0:raise TimeoutError('http_read_timeout')
+            conn.settimeout(remaining)
             chunk = conn.recv(4096)
             if not chunk:
                 if len(buffer) == 0:
@@ -267,8 +293,11 @@ class HttpGatewayServer:
         for line in lines[1:]:
             if ":" in line:
                 k, v = line.split(":", 1)
-                headers[k.strip().lower()] = v.strip()
+                key=k.strip().lower()
+                if key in headers:raise ValueError('duplicate_http_header')
+                headers[key] = v.strip()
 
+        if 'transfer-encoding' in headers:raise ValueError('unsupported_transfer_encoding')
         content_length = 0
         if "content-length" in headers:
             if not headers["content-length"].isdigit():
@@ -278,6 +307,9 @@ class HttpGatewayServer:
                 raise ValueError("payload_too_large")
 
         while len(body_so_far) < content_length:
+            remaining=deadline-time.monotonic()
+            if remaining<=0:raise TimeoutError('http_read_timeout')
+            conn.settimeout(remaining)
             chunk = conn.recv(min(8192, content_length - len(body_so_far)))
             if not chunk:
                 raise ValueError("incomplete_http_body")
@@ -329,14 +361,19 @@ class HttpGatewayServer:
         except Exception as exc:
             raise ValueError("invalid_json") from exc
 
-        id_solicitud, id_cliente, modelo_destino, modo, pixels, _ = validate_and_extract_pixels(req_json)
+        id_solicitud, id_cliente, modelo_destino, modo, pixels, image_base64 = validate_and_extract_pixels(req_json)
 
         # Permitir override dinámico de backend desde UI si se envía en el JSON
         b_host = str(req_json.get("backendHost") or self.backend_host).strip()
         b_port = int(req_json.get("backendPort") or self.backend_port)
 
         pixels_csv = ",".join(f"{p:.6f}".rstrip("0").rstrip(".") or "0" for p in pixels)
-        tcp_msg = f"IDENTIFY|{id_solicitud}|{pixels_csv}|{modo}"
+        if os.environ.get('CLIENT_PROTOCOL', 'V1') == 'V2':
+            raw = base64.b64decode(image_base64, validate=True)
+            mime = 'image/png' if raw.startswith(b'\x89PNG\r\n\x1a\n') else ('image/jpeg' if raw.startswith(b'\xff\xd8') else 'image/x-portable-graymap')
+            tcp_msg = f"IDENTIFY2|{id_solicitud}|{id_cliente}|{modo}|{mime}|{image_base64}"
+        else:
+            tcp_msg = f"IDENTIFY|{id_solicitud}|{pixels_csv}|{modo}"
 
         t0 = time.perf_counter()
         try:
@@ -467,7 +504,7 @@ def run_self_tests() -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Gateway HTTP propio para Cliente Web PC3")
-    parser.add_argument("--host", default=os.getenv("WEB_GW_HOST", "0.0.0.0"))
+    parser.add_argument("--host", default=os.getenv("WEB_GW_HOST", "127.0.0.1"))
     parser.add_argument("--port", type=int, default=int(os.getenv("WEB_GW_PORT", "8080")))
     parser.add_argument("--backend-host", default=os.getenv("BACKEND_HOST", "127.0.0.1"))
     parser.add_argument("--backend-port", type=int, default=int(os.getenv("BACKEND_PORT", "9000")))

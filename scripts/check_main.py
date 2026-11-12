@@ -1,4 +1,4 @@
-"""Preflight de main sin instalar dependencias. No simula RabbitMQ ni bases de datos."""
+"""Preflight de integration sin instalar dependencias. No simula RabbitMQ ni bases de datos."""
 from pathlib import Path
 import json
 import shutil
@@ -28,11 +28,11 @@ def main():
         for name in missing:
             print('FALTA:', name, file=sys.stderr)
         return 1
-    print('OK: estructura de main y fuentes existentes')
+    print('OK: estructura de integration y fuentes existentes')
     for name in ('solicitud_modeloA', 'resultado_modeloA'):
         data = json.loads((ROOT / 'contracts/examples' / (name + '.json')).read_text(encoding='utf-8'))
         assert data['schemaVersion'] == 1 and data['idSolicitud']
-    print('OK: ejemplos de contratos JSON parseables (aun no conectados)')
+    print('OK: ejemplos de contratos JSON parseables; ver test_cross_language para compatibilidad ejecutada')
     result = subprocess.run([sys.executable, '-m', 'cnn_python.predict',
                              'model/examples/circulo-0.png'], cwd=ROOT, text=True, capture_output=True, timeout=30)
     if result.returncode:
@@ -43,14 +43,9 @@ def main():
     print('OK: inferencia local CNN =', prediction['class'])
     javac = shutil.which('javac')
     if javac:
-        files = [str(p) for path in ('clients-java', 'frontend-java', 'server-java', 'workers/java')
-                 for p in (ROOT / path).glob('*.java')]
+        from build import compile_java
         with tempfile.TemporaryDirectory() as build:
-            result = subprocess.run([javac, '-encoding', 'UTF-8', '-d', build, *files],
-                                    cwd=ROOT, text=True, capture_output=True, timeout=100)
-            if result.returncode:
-                print(result.stderr, file=sys.stderr)
-                return 1
+            compile_java(build)
         print('OK: compilacion de fuentes Java')
     else:
         print('NO VERIFICADO: Java (javac no instalado)')
@@ -58,7 +53,7 @@ def main():
         print('Disponibilidad: dotnet instalado, probar dotnet build en CI/equipo')
     else:
         print('NO VERIFICADO: worker C# (.NET SDK no instalado aqui)')
-    print('PENDIENTE PC3: RabbitMQ, BD conectadas, Android, Web, tests multi-SO y carga 1000')
+    print('ALCANCE: preflight sin servicios; RabbitMQ y TCP se verifican por separado')
     return 0
 
 if __name__ == '__main__':

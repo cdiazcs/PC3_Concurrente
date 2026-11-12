@@ -1,3 +1,4 @@
+import os
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import csv
@@ -27,7 +28,7 @@ class BenchmarkTests(protocol.ProtocolTests):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.compile(['javac', '--release', '8', '-encoding', 'UTF-8', '-cp', str(cls.artifacts),
+        cls.compile(['javac', '--release', '17', '-encoding', 'UTF-8', '-cp', str(cls.artifacts) + os.pathsep + str(ROOT/'lib'/'*'),
                      '-d', str(cls.artifacts), 'benchmarks/LocalCnn.java', 'tests/BenchmarkChecks.java'], 'benchmark-checks')
 
     def benchmark(self, name, scenario='LOCAL_SEQUENTIAL', **values):
@@ -35,10 +36,11 @@ class BenchmarkTests(protocol.ProtocolTests):
         config = self.artifacts/(name+'.properties')
         settings = dict(scenario=scenario, images='model/examples', requests=40, clients=1,
                         warmup=10, cores=1, threads=1, **{'delay.min.ms': 0, 'delay.max.ms': 0})
+        settings["python"] = sys.executable
         settings.update(values)
         settings['output'] = output.as_posix()
         config.write_text(''.join(str(key)+'='+str(value)+'\n' for key, value in settings.items()), encoding='utf-8')
-        result = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark', '--config', str(config)],
+        result = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'benchmarks.Benchmark', '--config', str(config)],
                                 cwd=ROOT, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=90)
         (self.artifacts/(name+'.benchmark.log')).write_text(result.stdout+result.stderr, encoding='utf-8')
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
@@ -47,7 +49,7 @@ class BenchmarkTests(protocol.ProtocolTests):
     def test_local_cnn_300_images_match_independent_python_and_parallel(self):
         examples = load_split(split='test')
         data = ''.join(','.join(map(str, pixels))+'\n' for pixels, _ in examples)
-        result = subprocess.run(['java', '-cp', str(self.artifacts), 'BenchmarkChecks', 'model/weights/weights.txt'],
+        result = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'BenchmarkChecks', 'model/weights/weights.txt'],
                                 input=data, cwd=ROOT, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stderr)
         outputs = [[float(value) for value in line.split(',')] for line in result.stdout.splitlines()]
@@ -121,7 +123,7 @@ class BenchmarkTests(protocol.ProtocolTests):
 
     def test_invalid_local_resource_configurations_are_rejected(self):
         for scenario, cores, threads in [('LOCAL_SEQUENTIAL', 2, 2), ('LOCAL_PARALLEL', 1, 2)]:
-            result = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark', '--config',
+            result = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'benchmarks.Benchmark', '--config',
                                      'benchmarks/configs/local-sequential.properties', 'scenario='+scenario,
                                      'cores='+str(cores), 'threads='+str(threads)],
                                     cwd=ROOT, capture_output=True, text=True, timeout=15)
@@ -183,7 +185,7 @@ class BenchmarkTests(protocol.ProtocolTests):
                 node = node_agent.Node(args); nodes.append(node); node.launch()
             nodes[0].args.coordinator_workers = workers
             nodes[0].start(['java', '-Dopenaicubes.remotePostprocess=true', '-Dopenaicubes.denseChunkSize=1',
-                            '-Dopenaicubes.benchmarkProfile='+scenario, '-cp', str(self.artifacts), 'CentralServer',
+                            '-Dopenaicubes.benchmarkProfile='+scenario, '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'CentralServer',
                             str(coordinator), *workers], coordinator, 'Coordinator', 0, nodes[0].mask)
             for node, port in zip(nodes, agent_ports):
                 def handler_factory(current):
@@ -212,7 +214,7 @@ class BenchmarkTests(protocol.ProtocolTests):
             print('ETAPA6:', scenario, 'localhost only;', summary['compute_processes'], 'workers;', summary['compute_slots'], 'slots; 30/30', flush=True)
             original = graphs.properties(output.with_name(output.name+'.summary.properties'))
             config = self.artifacts/('profile-'+scenario.lower()+'.properties')
-            rejected = subprocess.run(['java', '-cp', str(self.artifacts), 'benchmarks.Benchmark', '--config', str(config),
+            rejected = subprocess.run(['java', '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'benchmarks.Benchmark', '--config', str(config),
                                        'allow.localhost=false', 'requests=1'], cwd=ROOT, capture_output=True, text=True, timeout=30)
             self.assertNotEqual(rejected.returncode, 0)
             self.assertIn('three_distinct_machines_required', rejected.stderr)

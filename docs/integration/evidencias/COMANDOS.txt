@@ -1,0 +1,38 @@
+Fecha del usuario: 2026-11-12 (America/Lima)
+Directorio: raíz del repositorio
+
+Iniciales:
+git status
+git branch --show-current
+git log -5 --oneline
+git diff
+git fetch origin integration
+git rev-parse HEAD origin/integration
+git switch -c fix/phase1-multiplatform
+python3 scripts/check_main.py
+
+Dependencias aisladas (sin instalaciones globales):
+curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/pc3-dotnet-install.sh
+bash /tmp/pc3-dotnet-install.sh --channel 8.0 --install-dir /tmp/pc3-phase1-dotnet --no-path
+python3 -m venv .venv
+.venv/bin/python -m pip install -r workers/python/requirements-amqp.txt
+
+Validación oficial local:
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PYTHON="$PWD/.venv/bin/python" bash scripts/check_integration.sh --tcp
+.venv/bin/python scripts/unit_tests.py
+.venv/bin/python -m unittest discover -s tests -p 'test_rabbit_messages.py' -v
+
+Broker real: credenciales del broker stock local suministradas en el entorno;
+no se guardan credenciales de despliegue en este registro. Comandos de prueba:
+.venv/bin/python scripts/rabbit_java_integration.py
+PC3_RABBIT_INTEGRATION=1 .venv/bin/python -m unittest discover -s tests -p 'test_rabbit_integration.py' -v
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 PC3_RABBIT_INTEGRATION=1 .venv/bin/python -m unittest discover -s tests -p 'test_rabbit_distributed.py' -v
+
+Regresión del intérprete Python:
+PATH=/tmp/pc3-phase1-dotnet:$PATH DOTNET_CLI_HOME=/tmp/pc3-phase1-dotnet-home DOTNET_CLI_TELEMETRY_OPTOUT=1 .venv/bin/python -m unittest discover -s tests -p 'test_benchmark.py' -v
+
+Cierre:
+git diff --check
+git diff -- model/
+git status --short --branch

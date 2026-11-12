@@ -1,0 +1,13 @@
+test_cache_failure_is_retryable_and_capacity_is_bounded (test_rabbit_messages.MessageTests.test_cache_failure_is_retryable_and_capacity_is_bounded) ... ok
+test_config_limits_and_secret_repr (test_rabbit_messages.MessageTests.test_config_limits_and_secret_repr) ... ok
+test_duplicate_coalescing_conflicts_and_ttl (test_rabbit_messages.MessageTests.test_duplicate_coalescing_conflicts_and_ttl) ... ok
+test_explicit_vector_matches_legacy_and_rejects_mislabelled_data (test_rabbit_messages.MessageTests.test_explicit_vector_matches_legacy_and_rejects_mislabelled_data) ... ok
+test_invalid_requests (test_rabbit_messages.MessageTests.test_invalid_requests) ... ok
+test_local_concurrency_immutable_weights_and_same_prediction (test_rabbit_messages.MessageTests.test_local_concurrency_immutable_weights_and_same_prediction) ... ok
+test_parser_and_sizes (test_rabbit_messages.MessageTests.test_parser_and_sizes) ... ok
+test_valid_profiles_same_pixels_result_shapes_and_correlation (test_rabbit_messages.MessageTests.test_valid_profiles_same_pixels_result_shapes_and_correlation) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.181s
+
+OK

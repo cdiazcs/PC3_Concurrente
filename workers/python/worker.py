@@ -311,7 +311,7 @@ def connection_handler(conn, address, slots):
 
 def main():
     global COMPUTE_THREADS, COMPUTE_SLOTS, FRAME_TIMEOUT_SECONDS
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 9102
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('WORKER_PYTHON_PORT', '9102'))
     COMPUTE_THREADS = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     if not 1 <= COMPUTE_THREADS <= 256:
         raise ValueError('invalid_threads')
@@ -324,7 +324,7 @@ def main():
     COMPUTE_SLOTS = threading.BoundedSemaphore(COMPUTE_THREADS)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind(('0.0.0.0', port))
+    server.bind((os.environ.get('WORKER_PYTHON_HOST', '127.0.0.1'), port))
     server.listen(64)
     print(f'WorkerPython escuchando en {port}, compute_threads={COMPUTE_THREADS} (GIL: no garantiza paralelismo CPU)', flush=True)
     with server:

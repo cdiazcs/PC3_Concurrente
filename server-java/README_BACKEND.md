@@ -1,3 +1,7 @@
+> Fase I: usar las instrucciones actualizadas en [EJECUCION_LOCAL](../docs/EJECUCION_LOCAL.md)
+> e [INSTALACION_EQUIPO](../docs/INSTALACION_EQUIPO.md). Los comandos históricos
+> siguientes no acreditan integración; credenciales se configuran por entorno.
+
 # Avance Backend y Middleware (Integrante 1)
 
 Este documento detalla la implementación del núcleo del sistema (Backend), la integración con RabbitMQ, la base de datos PostgreSQL y el Gateway HTTP.
@@ -71,7 +75,7 @@ Se agregó la carpeta `lib/` en la raíz del proyecto con las siguientes depende
 **¡Tu turno!** Ya tienes las tareas llegando a RabbitMQ. Debes hacer lo siguiente en tu código Python (`cnn_python` o `workers/`):
 
 1. **Consumir:** Conéctate a RabbitMQ y consume de la cola `cola_modeloA`.
-2. **Leer JSON:** El mensaje es un JSON (ver `contracts/RABBITMQ_V1.md`). La imagen viene en la clave `imagenBase64` como 256 números separados por comas (ej. `"0.1,0.5,..."`).
+2. **Leer JSON:** El mensaje es un JSON (ver `contracts/RABBITMQ_V1.md`). El vector viene en `payload.imagen.valores`, con formato `VECTOR_NORMALIZADO`, 16×16 y 256 números en [0,1]. No es Base64.
 3. **Procesar:** Convierte ese string a un arreglo de floats, pásalo por tu modelo CNN y obtén las probabilidades.
 4. **Responder:** Publica el resultado en la cola `cola_resultadosA` usando **exactamente** este formato JSON:
 

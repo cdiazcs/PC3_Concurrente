@@ -1,0 +1,1 @@
+OK: RabbitMQ autenticado; sin declarar ni publicar en colas

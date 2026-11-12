@@ -1,0 +1,3 @@
+OK: 10 solicitudes concurrentes Java -> RabbitMQ -> CNN Python -> RabbitMQ -> Java; IDs conservados
+OK: solicitud TCP invalida rechazada
+OK: worker desconectado devuelve timeout en 25.0s

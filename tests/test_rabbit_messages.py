@@ -36,6 +36,24 @@ def message(identifier='unit-1', backend=False):
 
 
 class MessageTests(unittest.TestCase):
+    def test_explicit_vector_matches_legacy_and_rejects_mislabelled_data(self):
+        cfg = config()
+        legacy = message(backend=True)
+        canonical = message(backend=True)
+        values = list(map(float, canonical.pop('imagenBase64').split(',')))
+        canonical['payload']['imagen'] = {'formato': 'VECTOR_NORMALIZADO',
+            'ancho': 16, 'alto': 16, 'valores': values}
+        self.assertEqual(validate(canonical, cfg).pixels, validate(legacy, cfg).pixels)
+        for key, invalid in (('formato', 'BASE64'), ('ancho', 8), ('alto', True),
+                             ('valores', [True]*256), ('valores', ['0.5']*256),
+                             ('valores', [0.5]*255), ('valores', [float('nan')]*256)):
+            with self.subTest(field=key, value=str(invalid)[:30]):
+                image = canonical['payload']['imagen']
+                previous = image[key]
+                image[key] = invalid
+                with self.assertRaises(MessageError): validate(canonical, cfg)
+                image[key] = previous
+
     def test_cache_failure_is_retryable_and_capacity_is_bounded(self):
         cache=ResultCache(1,60)
         with self.assertRaises(TemporaryError):

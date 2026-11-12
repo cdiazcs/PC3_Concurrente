@@ -74,7 +74,7 @@ public final class PhysicalConfig {
         String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
         Path path = Paths.get(output.toString()+".physical-"+suffix+".properties").toAbsolutePath();
         if (path.getParent() != null) Files.createDirectories(path.getParent());
-        List<String> args = new ArrayList<>(Arrays.asList(config.getProperty("python", "python"), "benchmarks/resource_probe.py", "--pid", pid, "--output", path.toString()));
+        List<String> args = new ArrayList<>(Arrays.asList(config.getProperty("python", System.getenv().getOrDefault("PYTHON", System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("win") ? "python" : "python3")), "benchmarks/resource_probe.py", "--pid", pid, "--output", path.toString()));
         if (cores != null) args.addAll(Arrays.asList("--cores", cores.toString()));
         else if (suffix.equals("before") && config.containsKey("client.affinity.mask")) args.addAll(Arrays.asList("--mask", config.getProperty("client.affinity.mask")));
         Process process = new ProcessBuilder(args).redirectErrorStream(true).redirectOutput(Paths.get(output+".probe-"+suffix+".log").toFile()).start();

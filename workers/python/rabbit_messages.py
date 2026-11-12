@@ -93,12 +93,24 @@ def validate(value, config, correlation_id=None):
         raise MessageError('invalid_mode')
     if value.get('tipo') == 'INFERENCIA':
         profile = 'backend-8901cfb'
-        raw = value.get('imagenBase64')
-        if not isinstance(raw, str) or len(raw) > 20000:
-            raise MessageError('invalid_pixels')
+        image = payload.get('imagen')
+        if image is not None:
+            if (not isinstance(image, dict) or image.get('formato') != 'VECTOR_NORMALIZADO'
+                    or type(image.get('ancho')) is not int or image['ancho'] != 16
+                    or type(image.get('alto')) is not int or image['alto'] != 16
+                    or not isinstance(image.get('valores'), list)
+                    or any(type(pixel) not in (int, float) for pixel in image['valores'])):
+                raise MessageError('invalid_pixels')
+            raw = image['valores']
+        else:
+            # Legacy input only: historical field is CSV, never real Base64.
+            raw = value.get('imagenBase64')
+            if not isinstance(raw, str) or len(raw) > 20000:
+                raise MessageError('invalid_pixels')
+            raw = raw.split(',')
         try:
-            pixels = vector(raw.split(','), 256, normalized=True)
-        except (ValueError, OverflowError):
+            pixels = vector(raw, 256, normalized=True)
+        except (ValueError, OverflowError, TypeError):
             raise MessageError('invalid_pixels') from None
     elif value.get('tipo') == 'CLASIFICAR_IMAGEN':
         profile = 'repository-v1'

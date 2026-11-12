@@ -1,0 +1,13 @@
+test_ack_only_after_confirmed_publication (test_phase2_contracts.DatabaseTransportTests.test_ack_only_after_confirmed_publication) ... ok
+test_bounded_database_retries (test_phase2_contracts.DatabaseTransportTests.test_bounded_database_retries) ... ok
+test_invalid_schema_and_correlation_do_not_reach_sql (test_phase2_contracts.DatabaseTransportTests.test_invalid_schema_and_correlation_do_not_reach_sql) ... ok
+test_publish_failure_does_not_ack_after_sql (test_phase2_contracts.DatabaseTransportTests.test_publish_failure_does_not_ack_after_sql) ... ok
+test_android_and_database_contracts (test_phase2_contracts.JvmContractsTests.test_android_and_database_contracts) ... OK: contrato Android JVM, framing, IDs, errores y probabilidades
+OK: contratos BD Java, schema, correlacion, etiqueta y probabilidades
+ok
+test_response_ids_and_probabilities (test_phase2_contracts.WebContractTests.test_response_ids_and_probabilities) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 4.771s
+
+OK

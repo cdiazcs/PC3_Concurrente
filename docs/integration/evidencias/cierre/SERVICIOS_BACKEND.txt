@@ -1,0 +1,2 @@
+OK: RabbitMQ autenticado; sin declarar ni publicar en colas
+NO VERIFICADO: postgres: POSTGRES_USER requerida y vacia/no definida

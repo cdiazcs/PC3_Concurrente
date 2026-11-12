@@ -19,12 +19,13 @@ logging.basicConfig(
     format="%(asctime)s [BD2-VALIDATOR] %(levelname)s: %(message)s",
 )
 logger = logging.getLogger("bd2_validator")
+logging.getLogger("pika").setLevel(logging.CRITICAL)
 
 # Configuración por variables de entorno (sin credenciales quemadas en código)
 RABBIT_HOST = os.getenv("RABBITMQ_HOST", "127.0.0.1")
 RABBIT_PORT = int(os.getenv("RABBITMQ_PORT", "5672"))
-RABBIT_USER = os.getenv("RABBITMQ_USER", "guest")
-RABBIT_PASS = os.getenv("RABBITMQ_PASS", "guest")
+RABBIT_USER = os.getenv("RABBITMQ_USER", "")
+RABBIT_PASS = os.getenv("RABBITMQ_PASSWORD", os.getenv("RABBITMQ_PASS", ""))
 RABBIT_VHOST = os.getenv("RABBITMQ_VHOST", "/")
 
 QUEUE_IN = os.getenv("QUEUE_VALIDATION", "cola_validacion")
@@ -34,7 +35,7 @@ DB_HOST = os.getenv("MARIADB_HOST", "127.0.0.1")
 DB_PORT = int(os.getenv("MARIADB_PORT", "3306"))
 DB_NAME = os.getenv("MARIADB_DATABASE", "pc3_bd2")
 DB_USER = os.getenv("MARIADB_USER", "pc3_validator")
-DB_PASS = os.getenv("MARIADB_PASSWORD", "pc3_val_pass")
+DB_PASS = os.getenv("MARIADB_PASSWORD", "")
 
 
 def create_db_pool() -> pooling.MySQLConnectionPool:
@@ -55,167 +56,58 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def validar_solicitud_idempotente(
-    db_pool: pooling.MySQLConnectionPool,
-    id_solicitud: str,
-    id_cliente: str,
-    auto_registrar_sintetico: bool = False,
-) -> tuple[bool, str]:
-    """
-    Ejecuta la validación dentro de una transacción ACID en MariaDB.
-    1. Si `id_solicitud` ya existe en `validaciones`, retorna el resultado previo (idempotencia).
-    2. Verifica que `id_cliente` exista y tenga estado = 'ACTIVO'.
-    3. Inserta el dictamen en `validaciones` y hace COMMIT.
-    """
-    conn = db_pool.get_connection()
-    try:
-        conn.start_transaction()
-        cursor = conn.cursor(dictionary=True)
-
-        # 1. Verificación de idempotencia (bloqueo de lectura si ya existe)
-        cursor.execute(
-            "SELECT aprobado, motivo FROM validaciones WHERE id_solicitud = %s",
-            (id_solicitud,),
-        )
-        existente = cursor.fetchone()
-        if existente is not None:
-            conn.commit()
-            return bool(existente["aprobado"]), f"IDEMPOTENTE:{existente['motivo']}"
-
-        # 2. Consultar estado del cliente
-        cursor.execute(
-            "SELECT estado FROM clientes WHERE id_cliente = %s",
-            (id_cliente,),
-        )
-        cliente = cursor.fetchone()
-
-        if cliente is None:
-            if auto_registrar_sintetico and id_cliente.startswith("bench-"):
-                # Permite pruebas de carga sintéticas con clientes bench-*
-                cursor.execute(
-                    "INSERT IGNORE INTO clientes (id_cliente, nombre_visible, estado) VALUES (%s, %s, 'ACTIVO')",
-                    (id_cliente, f"Benchmark {id_cliente}"),
-                )
-                aprobado = True
-                motivo = "APROBADO_BENCHMARK"
-            else:
-                # Para cumplir la FK fk_validacion_cliente, registramos clientes desconocidos como BLOQUEADO o rechazamos
-                cursor.execute(
-                    "INSERT IGNORE INTO clientes (id_cliente, nombre_visible, estado) VALUES (%s, %s, 'BLOQUEADO')",
-                    (id_cliente, "Auto-registrado no autorizado"),
-                )
-                aprobado = False
-                motivo = "CLIENTE_NO_REGISTRADO"
-        elif cliente["estado"] != "ACTIVO":
-            aprobado = False
-            motivo = f"CLIENTE_{cliente['estado']}"
-        else:
-            aprobado = True
-            motivo = "CLIENTE_ACTIVO_AUTORIZADO"
-
-        # 3. Persistir validación (INSERT IGNORE protege contra carreras concurrentes con mismo id_solicitud)
-        cursor.execute(
-            """
-            INSERT INTO validaciones (id_solicitud, id_cliente, aprobado, motivo)
-            VALUES (%s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE motivo = VALUES(motivo)
-            """,
-            (id_solicitud, id_cliente, aprobado, motivo),
-        )
-        conn.commit()
-        return aprobado, motivo
-
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        cursor.close()
-        conn.close()
-
-
-def main() -> None:
-    auto_bench = os.getenv("AUTO_REGISTER_BENCH", "true").lower() == "true"
-    db_pool = create_db_pool()
-    logger.info(f"Pool MariaDB conectado a {DB_HOST}:{DB_PORT}/{DB_NAME}")
-
-    credentials = pika.PlainCredentials(RABBIT_USER, RABBIT_PASS)
-    params = pika.ConnectionParameters(
-        host=RABBIT_HOST,
-        port=RABBIT_PORT,
-        virtual_host=RABBIT_VHOST,
-        credentials=credentials,
-        heartbeat=30,
-    )
-    connection = pika.BlockingConnection(params)
-    channel = connection.channel()
-
-    # Colas durables según contratos/RABBITMQ_V1.md
-    channel.queue_declare(queue=QUEUE_IN, durable=True)
-    channel.queue_declare(queue=QUEUE_OUT, durable=True)
-    channel.basic_qos(prefetch_count=10)
-
-    def on_message(ch, method, properties, body: bytes) -> None:
+def validar_solicitud_idempotente(db_pool, id_solicitud, id_cliente, auto_registrar_sintetico=False):
+    """Unique INSERT wins; duplicate delivery reads the immutable committed verdict."""
+    from workers.python.rabbit_messages import MessageError
+    if auto_registrar_sintetico:
+        raise ValueError('automatic_client_registration_disabled_use_explicit_seed')
+    for attempt in range(3):
+        conn, cursor = db_pool.get_connection(), None
         try:
-            msg = json.loads(body.decode("utf-8"))
-            id_solicitud = str(msg.get("idSolicitud", "")).strip()
-            id_cliente = str(msg.get("idCliente", "")).strip()
-
-            if not id_solicitud or not id_cliente:
-                logger.warning("Mensaje inválido sin idSolicitud o idCliente; descartando.")
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-                return
-
-            aprobado, motivo = validar_solicitud_idempotente(
-                db_pool, id_solicitud, id_cliente, auto_registrar_sintetico=auto_bench
-            )
-
-            respuesta = {
-                "schemaVersion": msg.get("schemaVersion", 1),
-                "tipo": "RESULTADO_VALIDACION",
-                "idSolicitud": id_solicitud,
-                "idCliente": id_cliente,
-                "modeloDestino": msg.get("modeloDestino", "A"),
-                "timestamp": utc_now_iso(),
-                "intento": msg.get("intento", 1),
-                "payload": {
-                    "aprobado": aprobado,
-                    "motivo": motivo,
-                    "validador": "BD2-MariaDB",
-                },
-            }
-
-            out_props = pika.BasicProperties(
-                delivery_mode=2,  # Mensaje persistente
-                content_type="application/json",
-                correlation_id=properties.correlation_id or id_solicitud,
-            )
-            ch.basic_publish(
-                exchange="",
-                routing_key=QUEUE_OUT,
-                body=json.dumps(respuesta, ensure_ascii=False).encode("utf-8"),
-                properties=out_props,
-            )
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            logger.info(
-                f"Validado idSolicitud={id_solicitud} cliente={id_cliente} -> aprobado={aprobado} ({motivo})"
-            )
-
-        except Exception as exc:
-            logger.error(f"Error procesando mensaje: {exc}", exc_info=True)
-            # Reencolar una vez si hubo fallo transitorio de red/BD
-            requeue = not method.redelivered
-            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=requeue)
-
-    channel.basic_consume(queue=QUEUE_IN, on_message_callback=on_message, auto_ack=False)
-    logger.info(f"Escuchando '{QUEUE_IN}' -> publicando en '{QUEUE_OUT}'...")
-    try:
-        channel.start_consuming()
-    except KeyboardInterrupt:
-        logger.info("Deteniendo validador BD2...")
-        channel.stop_consuming()
-    finally:
-        connection.close()
+            conn.start_transaction(isolation_level='READ COMMITTED')
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('SELECT id_cliente, aprobado, motivo FROM validaciones WHERE id_solicitud=%s FOR UPDATE', (id_solicitud,))
+            previous = cursor.fetchone()
+            if previous:
+                if previous['id_cliente'] != id_cliente:
+                    raise MessageError('idempotency_conflict')
+                conn.commit()
+                return bool(previous['aprobado']), previous['motivo']
+            cursor.execute('SELECT estado FROM clientes WHERE id_cliente=%s LOCK IN SHARE MODE', (id_cliente,))
+            client = cursor.fetchone()
+            approved = client is not None and client['estado'] == 'ACTIVO'
+            reason = 'CLIENTE_ACTIVO_AUTORIZADO' if approved else ('CLIENTE_BLOQUEADO' if client else 'CLIENTE_NO_REGISTRADO')
+            cursor.execute('INSERT INTO validaciones(id_solicitud,id_cliente,aprobado,motivo,cliente_registrado) VALUES(%s,%s,%s,%s,%s)',
+                           (id_solicitud,id_cliente,approved,reason,id_cliente if client else None))
+            conn.commit()
+            return approved, reason
+        except mysql.connector.Error as error:
+            conn.rollback()
+            if error.errno in (1062,1213,1205) and attempt < 2:
+                continue  # restart transaction: never overwrite the winning row
+            raise
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            if cursor is not None: cursor.close()
+            conn.close()
 
 
-if __name__ == "__main__":
+def main():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root))
+    from messaging.database_worker import DatabaseWorker, database_config
+    import signal
+    pool = create_db_pool()
+    def validate(message):
+        approved, reason = validar_solicitud_idempotente(pool,message['idSolicitud'],message['idCliente'])
+        return {'aprobado':approved,'motivo':reason,'validador':'BD2-MariaDB'}
+    worker = DatabaseWorker(database_config(QUEUE_IN,QUEUE_OUT),validate,'VALIDAR_CLIENTE','RESULTADO_VALIDACION')
+    for sig in (signal.SIGINT,signal.SIGTERM):
+        signal.signal(sig,lambda *_: worker.stop.set())
+    worker.run()
+
+if __name__ == '__main__':
     main()

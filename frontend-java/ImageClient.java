@@ -62,9 +62,19 @@ public final class ImageClient implements AutoCloseable {
     }
 
     public Response identify(String id, double[] pixels, Mode mode, Consumer<Phase> progress) throws IOException {
+        return execute(id, mode, message(id, pixels, mode), progress);
+    }
+
+    public Response identifyImage(String id, String clientId, ClientCli.PreparedImage image, Mode mode, Consumer<Phase> progress) throws IOException {
+        if(!ClientCli.validId(id)||!clientId.matches("[A-Za-z0-9_.:-]{1,128}")||image.bytes().length>1_000_000)
+            throw new IOException("invalid_client_or_image");
+        String request="IDENTIFY2|"+id+"|"+clientId+"|"+mode+"|"+image.mimeType()+"|"+java.util.Base64.getEncoder().encodeToString(image.bytes());
+        return execute(id, mode, request, progress);
+    }
+
+    private Response execute(String id, Mode mode, String request, Consumer<Phase> progress) throws IOException {
         if (!used.compareAndSet(false, true)) throw new IllegalStateException("client_already_used");
         if (closed.get()) throw new InterruptedIOException("request_cancelled");
-        String request = message(id, pixels, mode);
         long started = System.nanoTime(), end = started+TimeUnit.MILLISECONDS.toNanos(timeoutMs);
         AtomicBoolean timedOut = new AtomicBoolean();
         Socket connection = new Socket();
@@ -120,6 +130,10 @@ public final class ImageClient implements AutoCloseable {
         if (error instanceof ClientCli.ServerError) {
             String code = ((ClientCli.ServerError)error).code;
             switch (code) {
+                case "client_rejected": return "El cliente no esta registrado o esta bloqueado.";
+                case "validation_timeout": return "El validador de clientes no respondio; no se ejecuto la CNN.";
+                case "persistence_pending": return "La clasificacion termino; su persistencia aun no esta confirmada. Conserva el ID.";
+                case "persistence_failed": return "No se pudo confirmar el guardado; la consulta no se marca completada.";
                 case "insufficient_workers": return "El modo distribuido necesita al menos dos workers disponibles.";
                 case "no_identify_worker_available": return "No hay un worker Python disponible para el modo secuencial.";
                 case "model_unavailable": return "El servidor no pudo cargar los pesos del modelo.";

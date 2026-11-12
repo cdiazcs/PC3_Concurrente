@@ -22,7 +22,7 @@ public class WorkerJava {
     private static final Pattern DECIMAL = Pattern.compile("[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?");
 
     public static void main(String[] args) throws Exception {
-        int port = args.length >= 1 ? Integer.parseInt(args[0]) : 9101;
+        int port = args.length >= 1 ? Integer.parseInt(args[0]) : Integer.parseInt(System.getenv().getOrDefault("WORKER_JAVA_PORT", "9101"));
         int nThreads = args.length >= 2 ? Integer.parseInt(args[1]) : 4;
         if (nThreads < 1 || nThreads > 256) throw new IllegalArgumentException("invalid_threads");
         computeThreads = nThreads;
@@ -31,7 +31,7 @@ public class WorkerJava {
         computeSlots = new Semaphore(nThreads);
         ExecutorService pool = new ThreadPoolExecutor(0, maxClients, 30, TimeUnit.SECONDS,
                                                       new SynchronousQueue<Runnable>());
-        try (ServerSocket server = new ServerSocket(port)) {
+        try (ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(System.getenv().getOrDefault("WORKER_JAVA_HOST", "127.0.0.1")))) {
             System.out.println("WorkerJava escuchando en puerto " + port + " con " + nThreads + " hilos");
             while (true) {
                 Socket client = server.accept();

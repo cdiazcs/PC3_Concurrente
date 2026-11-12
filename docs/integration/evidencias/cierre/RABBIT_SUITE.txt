@@ -1,0 +1,13 @@
+test_a_real_profiles_correlated_equivalent_and_persistent (test_rabbit_integration.RabbitIntegrationTests.test_a_real_profiles_correlated_equivalent_and_persistent) ... ok
+test_b_duplicates_conflicts_and_invalid_dlq (test_rabbit_integration.RabbitIntegrationTests.test_b_duplicates_conflicts_and_invalid_dlq) ... ok
+test_c_retry_exhaustion_real_ttl_queue (test_rabbit_integration.RabbitIntegrationTests.test_c_retry_exhaustion_real_ttl_queue) ... ok
+test_d_control_and_logs_real_queues (test_rabbit_integration.RabbitIntegrationTests.test_d_control_and_logs_real_queues) ... ok
+test_d_multiple_requests_and_consumer_count (test_rabbit_integration.RabbitIntegrationTests.test_d_multiple_requests_and_consumer_count) ... ok
+test_e_process_restart_durable_input (test_rabbit_integration.RabbitIntegrationTests.test_e_process_restart_durable_input) ... ok
+test_f_real_connection_interruption_and_reconnect (test_rabbit_integration.RabbitIntegrationTests.test_f_real_connection_interruption_and_reconnect) ... skipped 'isolated broker control not enabled'
+test_g_real_broker_application_restart (test_rabbit_integration.RabbitIntegrationTests.test_g_real_broker_application_restart) ... skipped 'isolated broker control not enabled'
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.497s
+
+OK (skipped=2)

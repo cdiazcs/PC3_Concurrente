@@ -4,6 +4,7 @@ No prueba RabbitMQ ni distribucion fisica: valida el nucleo heredado que debe
 permanecer funcional antes de fusionar ramas PC3.
 """
 from pathlib import Path
+from build import compile_java, classpath
 import json
 import shutil
 import socket
@@ -33,9 +34,7 @@ def main():
         print('Se necesitan javac y java para esta prueba de integracion', file=sys.stderr)
         return 2
     with tempfile.TemporaryDirectory() as tmp:
-        java_files=[str(p) for name in ('clients-java','frontend-java','server-java','workers/java')
-                    for p in (ROOT/name).glob('*.java')]
-        subprocess.run(['javac','-encoding','UTF-8','-d',tmp,*java_files],cwd=ROOT,check=True,timeout=60)
+        compile_java(tmp)
         worker_port,server_port=free_port(),free_port()
         while server_port==worker_port:server_port=free_port()
         worker=subprocess.Popen([sys.executable,'workers/python/worker.py',str(worker_port)],
@@ -44,12 +43,12 @@ def main():
         try:
             if not available('127.0.0.1',worker_port,time.monotonic()+8):
                 raise RuntimeError('No se inicio worker Python')
-            backend=subprocess.Popen(['java','-cp',tmp,'CentralServer',str(server_port),
+            backend=subprocess.Popen(['java','-cp',classpath(tmp),'CentralServer',str(server_port),
                                       '127.0.0.1:'+str(worker_port)],cwd=ROOT,
                                       stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
             if not available('127.0.0.1',server_port,time.monotonic()+8):
                 raise RuntimeError('No se inicio CentralServer')
-            cmd=['java','-Djava.awt.headless=true','-cp',tmp,'ClientCli','127.0.0.1',str(server_port),'IDENTIFY',
+            cmd=['java','-Djava.awt.headless=true','-cp',classpath(tmp),'ClientCli','127.0.0.1',str(server_port),'IDENTIFY',
                  'model/examples/circulo-0.png','smoke1','SEQUENTIAL']
             test=subprocess.run(cmd,cwd=ROOT,capture_output=True,text=True,timeout=20)
             if test.returncode or 'Clase: circulo' not in test.stdout:

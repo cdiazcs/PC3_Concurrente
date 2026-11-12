@@ -1,0 +1,40 @@
+Perfil integrante: 3
+Python: 3.14.4
+OK: pika==1.3.2
+OK: mysql-connector-python==9.0.0
+OK: JDK 21+; bytecode release 17
+8.0.428 [/tmp/pc3-phase1-dotnet/sdk]
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Worker -> /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/workers/csharp/bin/Debug/net8.0/Worker.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.43
+OK: C# compilado (net8.0)
+Android: NO VERIFICADO; cliente README sin proyecto compilable, pendiente Fase II
+test_java_request_python_cnn_java_response (test_cross_language.CrossLanguageTests.test_java_request_python_cnn_java_response) ... OK: Python -> Java
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.057s
+
+OK
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-113858-7ec4e7
+test_connection_refused_and_gui_can_retry (test_frontend.FrontendTests.test_connection_refused_and_gui_can_retry) ... ok
+test_gui_timeout_and_cancellation_close_resources (test_frontend.FrontendTests.test_gui_timeout_and_cancellation_close_resources) ... ok
+test_image_client_both_modes_real_server_three_classes (test_frontend.FrontendTests.test_image_client_both_modes_real_server_three_classes) ... ok
+test_protocol_bad_replies_fragmentation_and_absolute_deadline (test_frontend.FrontendTests.test_protocol_bad_replies_fragmentation_and_absolute_deadline) ... ok
+test_shared_preprocessing_every_pixel_png_pgm_alpha_and_resize (test_frontend.FrontendTests.test_shared_preprocessing_every_pixel_png_pgm_alpha_and_resize) ... ok
+test_swing_concurrent_out_of_order_real_inference_and_edt (test_frontend.FrontendTests.test_swing_concurrent_out_of_order_real_inference_and_edt) ... ok
+test_unit_components_ids_messages_jpeg_and_invalid_formats (test_frontend.FrontendTests.test_unit_components_ids_messages_jpeg_and_invalid_formats) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 36.718s
+
+OK
+NO VERIFICADO: inferencia RabbitMQ real (usar --rabbit con all/1)
+NO VERIFICADO: autenticacion de servicios externos (usar --services --member N)

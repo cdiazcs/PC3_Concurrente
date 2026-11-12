@@ -1,5 +1,5 @@
 -- BD2 de validación. Diseño inicial: ejecutar en MariaDB (motor distinto a PostgreSQL).
--- ESTADO: sólo schema; aún falta nodo AMQP y lógica real de validación.
+-- Fase II: aplicar despues 03_phase2.sql; consumidor validator_worker.py.
 CREATE TABLE IF NOT EXISTS clientes (
   id_cliente VARCHAR(128) NOT NULL PRIMARY KEY,
   nombre_visible VARCHAR(120) NULL,

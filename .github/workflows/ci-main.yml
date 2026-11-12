@@ -1,12 +1,16 @@
-name: Verificar main - OpenAI Cubes PC3
+name: Fase I multiplataforma
 on:
   pull_request:
-    branches: [main]
+    branches: [integration, main]
   push:
-    branches: [main]
+    branches: [integration, main]
 jobs:
-  baseline:
-    runs-on: ubuntu-latest
+  build-unit:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -15,13 +19,113 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Validar estructura y prediccion
-        run: python scripts/check_main.py
-      - name: Prueba TCP end-to-end heredada
-        run: python scripts/smoke_main.py
-      - name: Suite original de unitarios e integracion
-        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - run: python scripts/build.py
+      - run: python scripts/check_main.py
+      - run: python scripts/unit_tests.py
+      - name: Script Windows y TCP local
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./scripts/Build-Java.ps1
+          ./scripts/Check-Integration.ps1 -Tcp
+      - name: Script Ubuntu y TCP local
+        if: runner.os == 'Linux'
+        run: bash scripts/check_integration.sh --tcp
+  rabbit-real:
+    runs-on: ubuntu-latest
+    services:
+      rabbit:
+        image: rabbitmq:4.4.0
+        env:
+          RABBITMQ_DEFAULT_USER: phase1-ci
+          RABBITMQ_DEFAULT_PASS: ${{ github.run_id }}-${{ github.run_attempt }}
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s --health-timeout 5s --health-retries 12
+    env:
+      RABBITMQ_HOST: 127.0.0.1
+      RABBITMQ_PORT: '5672'
+      # Disposable CI account: avoids guest loopback restrictions across container NAT.
+      RABBITMQ_USER: phase1-ci
+      RABBITMQ_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: python -m pip install -r workers/python/requirements-amqp.txt
+      - run: python scripts/build.py
+      - run: python scripts/rabbit_java_integration.py
+      - run: python -m unittest discover -s tests -p test_rabbit_integration.py -v
+        env:
+          PC3_RABBIT_INTEGRATION: '1'
+  phase2-real:
+    runs-on: ubuntu-latest
+    services:
+      rabbit:
+        image: rabbitmq:4.4.0
+        env:
+          RABBITMQ_DEFAULT_USER: phase2-ci
+          RABBITMQ_DEFAULT_PASS: ${{ github.run_id }}-${{ github.run_attempt }}
+        ports: ['15673:5672']
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s --health-timeout 5s --health-retries 12
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: pc3_test_ci
+          POSTGRES_USER: pc3_test
+          POSTGRES_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+        ports: ['15432:5432']
+        options: >-
+          --health-cmd "pg_isready -U pc3_test -d pc3_test_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+      mariadb:
+        image: mariadb:11.8
+        env:
+          MARIADB_DATABASE: pc3_test_ci
+          MARIADB_USER: pc3_test
+          MARIADB_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+          MARIADB_ROOT_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}-root
+        ports: ['13306:3306']
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      RABBITMQ_HOST: 127.0.0.1
+      RABBITMQ_PORT: '15673'
+      RABBITMQ_USER: phase2-ci
+      RABBITMQ_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '15432'
+      POSTGRES_DB: pc3_test_ci
+      POSTGRES_USER: pc3_test
+      POSTGRES_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+      MARIADB_HOST: 127.0.0.1
+      MARIADB_PORT: '13306'
+      MARIADB_DATABASE: pc3_test_ci
+      MARIADB_USER: pc3_test
+      MARIADB_PASSWORD: ${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: python -m pip install -r databases/mariadb/requirements.txt
+      - run: python scripts/phase2_integration.py

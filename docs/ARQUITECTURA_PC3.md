@@ -1,3 +1,13 @@
+# Arquitectura actual — Fase II
+
+El flujo RabbitMQ con validación MariaDB y persistencia PostgreSQL está
+implementado y probado localmente. Consultar el [diagrama y alcance actual](integration/FASE2_SISTEMA_COMPLETO.md)
+y los [resultados](integration/FASE2_RESULTADOS.md). Android tiene proyecto Kotlin
+sin APK verificado. La sección siguiente conserva la fotografía anterior a
+integración; no representa el estado actual de Fase II.
+
+---
+
 # Arquitectura — estado actual vs objetivo PC3
 
 ## ACTUAL (núcleo existente que arranca)

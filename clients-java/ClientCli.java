@@ -31,13 +31,13 @@ public class ClientCli {
 
     private static void run(String[] args) throws Exception {
         // Si faltan datos, usa el servidor local y el puerto por defecto.
-        String host = args.length > 0 ? args[0] : "127.0.0.1";
-        int port = args.length > 1 ? Integer.parseInt(args[1]) : 9000;
+        String host = args.length > 0 ? args[0] : System.getenv().getOrDefault("BACKEND_HOST", "127.0.0.1");
+        int port = args.length > 1 ? Integer.parseInt(args[1]) : Integer.parseInt(System.getenv().getOrDefault("BACKEND_PORT", "9000"));
         boolean identify = args.length > 2;
-        int networkTimeout = Integer.getInteger("openaicubes.clientTimeoutMs", 15000);
+        int networkTimeout = Integer.getInteger("openaicubes.clientTimeoutMs", Integer.parseInt(System.getenv().getOrDefault("CLIENT_TIMEOUT_MS", "30000")));
         if (networkTimeout < 1 || networkTimeout > 120000) throw new IllegalArgumentException("invalid_timeout");
         String requestId = null;
-        String mode = args.length == 6 ? args[5].toUpperCase(Locale.ROOT) : "SEQUENTIAL";
+        String mode = args.length == 6 ? args[5].toUpperCase(Locale.ROOT) : System.getenv().getOrDefault("INFERENCE_MODE", "SEQUENTIAL").toUpperCase(Locale.ROOT);
         if (!mode.equals("SEQUENTIAL") && !mode.equals("DISTRIBUTED")) throw new IllegalArgumentException("invalid_mode");
         if (identify && (args.length < 4 || args.length > 6 || !args[2].equalsIgnoreCase("IDENTIFY")))
             throw new IllegalArgumentException("Uso: java -cp build ClientCli [host puerto [IDENTIFY imagen.png|imagen.pgm [requestId [SEQUENTIAL|DISTRIBUTED]]]]");
@@ -56,7 +56,12 @@ public class ClientCli {
                 if (csv.length() > 0) csv.append(',');
                 csv.append(Double.toString(value));
             }
-            cases = new String[] {"IDENTIFY|" + requestId + "|" + csv + (args.length == 6 ? "|" + mode : "")};
+            if(System.getenv().getOrDefault("CLIENT_PROTOCOL","V1").equals("V2")) {
+                PreparedImage image=prepareImage(new File(args[3]));
+                String client=System.getenv().getOrDefault("CLIENT_ID", "");
+                if(!client.matches("[A-Za-z0-9_.:-]{1,128}") || image.bytes().length>1_000_000)throw new IllegalArgumentException("invalid_client_or_image");
+                cases=new String[]{"IDENTIFY2|"+requestId+"|"+client+"|"+mode+"|"+image.mimeType()+"|"+Base64.getEncoder().encodeToString(image.bytes())};
+            } else cases = new String[] {"IDENTIFY|" + requestId + "|" + csv + "|" + mode};
         }
         Timer deadlines = new Timer("client-network-deadline", true);
         try (Socket socket = new Socket()) {
@@ -172,11 +177,18 @@ public class ClientCli {
         public final int width, height;
         private final double[] pixels;
         private final BufferedImage preview;
-        private PreparedImage(File file, int width, int height, double[] pixels, BufferedImage preview) {
+        private final byte[] source;
+        private PreparedImage(File file, int width, int height, double[] pixels, BufferedImage preview) throws IOException {
+            this.source = java.nio.file.Files.readAllBytes(file.toPath());
             this.name = file.getName(); this.width = width; this.height = height;
             this.pixels = pixels.clone(); this.preview = thumbnail(preview, 480);
         }
         public double[] pixels() { return pixels.clone(); }
+        public byte[] bytes() { return source.clone(); }
+        public String mimeType() {
+            if(source.length>2 && source[0]=='P' && (source[1]=='2'||source[1]=='5'))return "image/x-portable-graymap";
+            return source.length>2 && (source[0]&255)==255 && (source[1]&255)==216 ? "image/jpeg":"image/png";
+        }
         public BufferedImage preview() { return thumbnail(preview, 480); }
     }
 

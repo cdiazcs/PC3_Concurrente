@@ -1,3 +1,4 @@
+import os
 """ETAPA 2: integracion real Java -> Java -> Python -> CNN, sin dependencias.
 
 python tests/test_identify.py
@@ -138,7 +139,7 @@ class IdentifyTests(protocol.ProtocolTests):
         command = ['java', '-Dopenaicubes.workerTimeoutMs='+str(timeout_ms),
                    '-Dopenaicubes.identifyTimeoutMs='+str(timeout_ms*4),
                    '-Dopenaicubes.clientTimeoutMs='+str(max(timeout_ms*6, 2000)),
-                   '-cp', str(self.artifacts), 'CentralServer', str(port)]
+                   '-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'CentralServer', str(port)]
         self.start(command+['127.0.0.1:'+str(p) for p in ports], port, name)
         return port
 
@@ -146,12 +147,28 @@ class IdentifyTests(protocol.ProtocolTests):
         command = ['java']
         if timeout_ms is not None:
             command += ['-Dopenaicubes.clientTimeoutMs='+str(timeout_ms)]
-        command += ['-cp', str(self.artifacts), 'ClientCli', '127.0.0.1',
+        command += ['-cp', str(self.artifacts) + os.pathsep + str(ROOT/'lib'/'*'), 'ClientCli', '127.0.0.1',
                     str(port or self.central), 'IDENTIFY', str(path)]
         if request_id is not None:
             command.append(request_id)
         return subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                               encoding='utf-8', errors='replace', timeout=20)
+
+    def test_cli_environment_mode_and_deadline(self):
+        image = ROOT/'model/examples/circulo-0.png'
+        def infer(fields):
+            result = self.model.predict([float(value) for value in fields[2].split(',' )])
+            return 'RESULT|'+fields[1]+'|1|3|'+protocol.csv(result.probabilities)
+        with mock.patch.dict(os.environ, {'INFERENCE_MODE': 'DISTRIBUTED', 'CLIENT_TIMEOUT_MS': '500'}):
+            with FaultPeer(infer) as peer:
+                result = self.java_client(image, 'env-mode', peer.port)
+                self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+                self.assertEqual(peer.requests[-1].split('|')[-1], 'DISTRIBUTED')
+            with FaultPeer(lambda fields: STALL) as peer:
+                start = time.monotonic()
+                result = self.java_client(image, 'env-deadline', peer.port)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertLess(time.monotonic()-start, 3)
 
     def test_identify_300_independent_images_match_local(self):
         confusion = [[0]*3 for _ in range(3)]

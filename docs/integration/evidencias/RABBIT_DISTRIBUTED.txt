@@ -1,0 +1,8 @@
+
+Artefactos: /home/cristian/Desktop/PC3_Concurrente/PC3_Concurrente/build/stage0-20261112-112358-1d5aa7
+test_amqp_reuses_coordinator_and_all_languages (test_rabbit_distributed.RabbitDistributedTests.test_amqp_reuses_coordinator_and_all_languages) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 6.334s
+
+OK

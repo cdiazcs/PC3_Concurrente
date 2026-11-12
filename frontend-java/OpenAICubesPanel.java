@@ -11,9 +11,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public final class OpenAICubesPanel extends JPanel implements AutoCloseable {
     private static final int MAX_ACTIVE = 8;
+    final JTextField clientId = new JTextField(System.getenv().getOrDefault("CLIENT_ID", "cliente-desktop-01"));
     final JTextField host = new JTextField();
     final JTextField port = new JTextField();
-    final JSpinner timeout = new JSpinner(new SpinnerNumberModel(15, 1, 120, 1));
+    final JSpinner timeout = new JSpinner(new SpinnerNumberModel(Integer.parseInt(System.getenv().getOrDefault("CLIENT_TIMEOUT_MS", "30000"))/1000, 1, 120, 1));
     final JComboBox<ImageClient.Mode> mode = new JComboBox<>(ImageClient.Mode.values());
     final JButton choose = SwingUi.button("Seleccionar imagen…", false);
     final JButton send = SwingUi.button("Identificar imagen", true);
@@ -38,6 +39,7 @@ public final class OpenAICubesPanel extends JPanel implements AutoCloseable {
         this.host.getAccessibleContext().setAccessibleName("Host del servidor");
         this.port.getAccessibleContext().setAccessibleName("Puerto del servidor");
         timeout.getAccessibleContext().setAccessibleName("Tiempo límite en segundos");
+        mode.setSelectedItem(ImageClient.Mode.valueOf(System.getenv().getOrDefault("INFERENCE_MODE", "SEQUENTIAL").toUpperCase(Locale.ROOT)));
         mode.getAccessibleContext().setAccessibleName("Modo de ejecución");
         setLayout(new BorderLayout()); setBackground(SwingUi.BACKGROUND);
         JPanel header = new JPanel(new BorderLayout(20, 0)); header.setBackground(SwingUi.INK);
@@ -59,7 +61,7 @@ public final class OpenAICubesPanel extends JPanel implements AutoCloseable {
         controls.add(Box.createVerticalStrut(14));
         JPanel endpoint = new JPanel(new GridLayout(1, 2, 10, 0)); endpoint.setOpaque(false);
         endpoint.add(field("Host del servidor", this.host)); endpoint.add(field("Puerto", this.port));
-        controls.add(endpoint); controls.add(Box.createVerticalStrut(10));
+        controls.add(endpoint); controls.add(field("Identificacion de cliente", clientId)); controls.add(Box.createVerticalStrut(10));
         JPanel options = new JPanel(new GridLayout(1, 2, 10, 0)); options.setOpaque(false);
         options.add(field("Modo", mode)); options.add(field("Espera (segundos)", timeout));
         controls.add(options); controls.add(Box.createVerticalStrut(18));
@@ -144,6 +146,7 @@ public final class OpenAICubesPanel extends JPanel implements AutoCloseable {
             String id = identity.nextRequestId();
             ChatPanel.Entry entry = chat.addRequest(++queryNumber, id, selected, chosenMode, host.getText().trim()+":"+serverPort);
             QueryWorker worker = new QueryWorker(client, entry, selected.pixels(), chosenMode);
+            worker.image=selected; worker.clientIdentity=clientId.getText().trim();
             active.put(id, worker); notice.setForeground(SwingUi.MUTED);
             notice.setText("Puedes enviar otra consulta o cambiar de imagen mientras se procesa.");
             connection.setText("Conectando…"); updateButtons(); worker.execute();
@@ -160,12 +163,16 @@ public final class OpenAICubesPanel extends JPanel implements AutoCloseable {
     final class QueryWorker extends SwingWorker<ImageClient.Response, ImageClient.Phase> {
         final ImageClient client;
         final ChatPanel.Entry entry;
+        ClientCli.PreparedImage image;
+        String clientIdentity;
         private final double[] pixels;
         private final ImageClient.Mode requestedMode;
         QueryWorker(ImageClient client, ChatPanel.Entry entry, double[] pixels, ImageClient.Mode mode) {
             this.client = client; this.entry = entry; this.pixels = pixels; this.requestedMode = mode;
         }
         @Override protected ImageClient.Response doInBackground() throws Exception {
+            if(System.getenv().getOrDefault("CLIENT_PROTOCOL","V1").equals("V2"))
+                return client.identifyImage(entry.requestId,clientIdentity,image,requestedMode,phase->publish(phase));
             return client.identify(entry.requestId, pixels, requestedMode, phase -> publish(phase));
         }
         @Override protected void process(List<ImageClient.Phase> phases) {

@@ -1,3 +1,39 @@
+# Fase II — bases de datos y clientes
+
+Trabajo exclusivamente en `integration`, sin commit/push/merge automáticos.
+El flujo BD2 MariaDB → CNN Python → BD1 PostgreSQL está implementado por RabbitMQ
+con validación previa y confirmación transaccional antes de responder éxito.
+
+- [Arquitectura, contratos y comandos por integrante](docs/integration/FASE2_SISTEMA_COMPLETO.md)
+- [Resultados y pendientes reales de Fase II](docs/integration/FASE2_RESULTADOS.md)
+- [Android Kotlin: proyecto y contrato JVM; APK pendiente](clients/android/README.md)
+
+Configuración: config/phase2.local.example.env o phase2.distributed.example.env.
+Pruebas sin servicios: `python scripts/unit_tests.py`. Integración completa solo
+en bases pc3_test_* propias: `python scripts/phase2_integration.py`.
+No se declara APK Android, Windows ni despliegue distribuido físico verificados.
+
+---
+
+# Fase I — integración multiplataforma
+
+Estado y evidencia actual: [resultados](docs/integration/FASE1_RESULTADOS.md).
+Trabajar exclusivamente sobre `integration`, sin crear ramas ni realizar
+commit/push/merge/rebase automáticamente; no usar instrucciones
+históricas de inicialización Git sobre este repositorio existente.
+
+- [Instalación por integrante y SO](docs/INSTALACION_EQUIPO.md)
+- [Compilación y ejecución local](docs/EJECUCION_LOCAL.md)
+- [Tres nodos y Tailscale](docs/EJECUCION_DISTRIBUIDA.md)
+- [Cambios y alcance de Fase I](docs/integration/FASE1_MULTIPLATAFORMA.md)
+
+Ubuntu: `bash scripts/check_integration.sh`; Windows:
+`./scripts/Check-Integration.ps1`. Agregar `--tcp` / `-Tcp` para sockets locales.
+Las pruebas de broker real son opt-in: `--rabbit` / `-Rabbit`, con credenciales
+en el entorno. Una prueba omitida se informa como NO VERIFICADA.
+
+---
+
 # OpenAI Cubes — PC3 2026-II | Main de partida
 
 **Curso:** CC4P1 Programación Concurrente y Distribuida — UNI.

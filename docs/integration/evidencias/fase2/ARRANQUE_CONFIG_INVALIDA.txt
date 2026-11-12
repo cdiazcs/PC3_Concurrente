@@ -1,0 +1,3 @@
+Configuracion FULL incoherente: salida no cero antes de abrir conexiones.
+Exception in thread "main" java.lang.IllegalArgumentException: full_pipeline_requires_rabbit_and_larger_client_timeout
+	at CentralServer.main(CentralServer.java:76)

@@ -1,0 +1,1 @@
+NO VERIFICADO: mariadb: MARIADB_USER requerida y vacia/no definida
